@@ -4,8 +4,8 @@ class PYGAME_WINDOW:
         pygame.init()
         self.screen = pygame.display.set_mode((300, 100))
 
-class Prepare:
-    pass
+    def Prepare(self):
+        self.screen.fill((255, 255, 255))
 
-class Reveal:
-    pass
+    def Reveal(self):
+        pygame.display.update()
