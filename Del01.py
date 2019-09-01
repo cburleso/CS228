@@ -2,6 +2,7 @@ import sys
 sys.path.insert(0, '..')
 import Leap
 
+controller = Leap.Controller()
 ##from pygameWindow import PYGAME_WINDOW
 ##import random
 ##x = 400
@@ -22,7 +23,10 @@ import Leap
 ##pygameWindow = PYGAME_WINDOW()
 ##
 ##print(pygameWindow)
-##while True:
+while True:
+    frame = controller.frame()
+    if (len(frame.hands) > 0):
+        print "hand detected."
 ##    pygameWindow.Prepare()
 ##    pygameWindow.Draw_Black_Circle(x, y)
 ##    Perturb_Circle_Position()
