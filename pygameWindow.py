@@ -20,3 +20,6 @@ class PYGAME_WINDOW:
     # within the users window 
     def Draw_Black_Circle(self, x, y):
         pygame.draw.circle(self.screen, (0,0,0), (x, y), 20)
+
+    def Draw_Black_Line(self, xBase, yBase, xTip, yTip, fingerWidth):
+        pygame.draw.line(self.screen, (0, 0, 0), (xBase, yBase), (xTip, yTip), fingerWidth)
