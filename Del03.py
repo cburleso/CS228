@@ -1,3 +1,4 @@
+import numpy
 from Deliverable import DELIVERABLE
 
 Deliverable = DELIVERABLE()
