@@ -20,6 +20,7 @@ class DELIVERABLE:
         self.previousNumberOfHands = 0
         self.currentNumberOfHands = 0
         self.gestureData = np.zeros((5, 4, 6), dtype='f')
+        self.gestureCount = 0
 
     def Handle_Frame(self, frame):
         global x, y, xMin, xMax, yMin, yMax
@@ -73,9 +74,10 @@ class DELIVERABLE:
         return xVal, yVal
 
     def Save_Gesture(self):
-        gestureF = open('C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/userData/gesture.p', 'wb')
+        gestureF = open('C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/userData/gesture%s.p' % self.gestureCount, 'wb')
         pickle.dump(self.gestureData, gestureF)
         gestureF.close()
+        self.gestureCount += 1
         
 
     def Recording_Is_Ending(self):
