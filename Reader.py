@@ -1,6 +1,7 @@
 import pickle
 import os
 import constants
+import time
 from pygameWindow_Del03 import PYGAME_WINDOW
 class READER:
     def __init__(self):
@@ -56,6 +57,7 @@ class READER:
                 
  
         self.pygameWindow.Reveal()
+        time.sleep(0.1)
         
         
             
