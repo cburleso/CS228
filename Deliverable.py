@@ -1,4 +1,5 @@
 import os, sys
+import shutil
 sys.path.insert(0, '..')
 from pygameWindow import PYGAME_WINDOW
 from pygameWindow_Del03 import PYGAME_WINDOW
@@ -21,6 +22,7 @@ class DELIVERABLE:
         self.currentNumberOfHands = 0
         self.gestureData = np.zeros((5, 4, 6), dtype='f')
         self.gestureCount = 0
+        self.create_Directory()
 
     def Handle_Frame(self, frame):
         global x, y, xMin, xMax, yMin, yMax
@@ -78,6 +80,11 @@ class DELIVERABLE:
         pickle.dump(self.gestureData, gestureF)
         gestureF.close()
         self.gestureCount += 1
+
+    def create_Directory(self):
+        shutil.rmtree('C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/userData') # Delete previous
+        os.mkdir('userData') # Create new 
+        
         
 
     def Recording_Is_Ending(self):
