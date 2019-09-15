@@ -22,7 +22,7 @@ class DELIVERABLE:
         self.currentNumberOfHands = 0
         self.gestureData = np.zeros((5, 4, 6), dtype='f')
         self.gestureCount = 0
-        self.create_Directory()
+        self.Create_Directory()
 
     def Handle_Frame(self, frame):
         global x, y, xMin, xMax, yMin, yMax
@@ -81,7 +81,7 @@ class DELIVERABLE:
         gestureF.close()
         self.gestureCount += 1
 
-    def create_Directory(self):
+    def Create_Directory(self):
         shutil.rmtree('C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/userData') # Delete previous
         os.mkdir('userData') # Create new 
         
