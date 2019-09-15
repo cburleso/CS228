@@ -1,10 +1,11 @@
-import sys
+import os, sys
 sys.path.insert(0, '..')
 from pygameWindow import PYGAME_WINDOW
 from pygameWindow_Del03 import PYGAME_WINDOW
 import Leap
 import constants
 import numpy as np
+import pickle
 
 class DELIVERABLE:
     def __init__(self):
@@ -31,6 +32,7 @@ class DELIVERABLE:
 
         if self.Recording_Is_Ending():
             print(self.gestureData)
+            self.Save_Gesture()
     
     def Handle_Finger(self, finger, i):
         for j in range(4):
@@ -39,7 +41,6 @@ class DELIVERABLE:
             self.Handle_Bone(bone, fingerWidth, i, j)
 
     def Handle_Bone(self, bone, fingerWidth, i, j):
-        
         tip = bone.next_joint
         base = bone.prev_joint
         
@@ -55,6 +56,7 @@ class DELIVERABLE:
         
         xBase, yBase = self.Handle_Vector_From_Leap(base)
         xTip, yTip = self.Handle_Vector_From_Leap(tip)
+        
         if self.currentNumberOfHands == 1:
             handColor = (102, 255, 102) # Green 
         else:
@@ -69,6 +71,12 @@ class DELIVERABLE:
         xVal = (constants.pygameWindowWidth / 300) * v[0] + .5 * constants.pygameWindowWidth
         yVal = (500 - v[1]) * constants.pygameWindowDepth / 400
         return xVal, yVal
+
+    def Save_Gesture(self):
+        gestureF = open('C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/userData/gesture.p', 'wb')
+        pickle.dump(self.gestureData, gestureF)
+        gestureF.close()
+        
 
     def Recording_Is_Ending(self):
         if (self.previousNumberOfHands == 2):
