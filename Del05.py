@@ -1,7 +1,7 @@
 import numpy
-from Recorder import DELIVERABLE
+from Recorder import RECORDER
 
-Deliverable = DELIVERABLE()
+Deliverable = RECORDER()
 Deliverable.Run_Forever()
 
 
