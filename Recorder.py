@@ -79,11 +79,33 @@ class RECORDER:
     def Handle_Vector_From_Leap(self, v):
         global xMax, xMin, yMax, yMin
         xVal = v[0]
-        yVal = v[1]
-        # Scale 
-        xVal = (constants.pygameWindowWidth / 300) * v[0] + .5 * constants.pygameWindowWidth
-        yVal = (500 - v[1]) * constants.pygameWindowDepth / 400
+        yVal = v[2]
+        
+        if (xVal < self.xMin):
+            self.xMin = xVal
+        if (xVal > self.xMax):
+            self.xMax = xVal
+        
+        if (yVal < self.yMin):
+            self.yMin = yVal
+        if (yVal > self.yMax):
+            self.yMax = yVal
+        
+        # Scale x and y coordinates
+        xVal = self.Scale(xVal, self.xMin, self.xMax, 0, constants.pygameWindowWidth)
+        yVal = self.Scale(yVal, self.yMin, self.yMax, 0, constants.pygameWindowDepth)
+        
         return xVal, yVal
+
+    def Scale(self, val, minOldRange, maxOldRange, minNewRange, maxNewRange):
+        diff = val - minOldRange
+        oldRange = maxOldRange - minOldRange
+        newRange = maxNewRange - minNewRange
+        if (oldRange == 0):
+            return val
+        oldFraction = diff / oldRange
+        newVal = oldFraction * newRange
+        return newVal
 
     def Save_Gesture(self):
         gestureF = open('C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/userData/gesture.p', 'wb')

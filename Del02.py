@@ -27,6 +27,7 @@ def Handle_Frame(frame):
     for finger in fingers:
         Handle_Finger(finger)
 
+
 def Handle_Finger(finger):
     for i in range(4):
         bone = finger.bone(i)
@@ -43,17 +44,34 @@ def Handle_Bone(bone, fingerWidth):
 def Handle_Vector_From_Leap(v):
     global xMax, xMin, yMax, yMin
     xVal = v[0]
-    yVal = v[3]
+    yVal = v[2]
 
+    if (xVal < xMin):
+        xMin = xVal
+    if (xVal > xMax):
+        xMax = xVal
+        
+    if (yVal < yMin):
+        yMin = yVal
+    if (yVal > yMax):
+        yMax = yVal
+        
     # Scale x and y coordinates
-    xVal = (constants.pygameWindowWidth / 300) * v[0] + .5 * constants.pygameWindowWidth
-    yVal = (500 - v[1]) * constants.pygameWindowDepth / 400 
+    xVal = Scale(xVal, xMin, xMax, 0, constants.pygameWindowWidth)
+    yVal = Scale(yVal, yMin, yMax, 0, constants.pygameWindowDepth) 
 
     return xVal, yVal
+
+def Scale(val, minOldRange, maxOldRange, minNewRange, maxNewRange):
+    diff = val - minOldRange
+    oldRange = maxOldRange - minOldRange
+    newRange = maxNewRange - minNewRange
+    if (oldRange == 0):
+        return val
+    oldFraction = diff / oldRange
+    newVal = oldFraction * newRange
+    return newVal
     
-    
-    
-     
 # Initialize an instance of the PYGAME_WINDOW class to create function calls      
 pygameWindow = PYGAME_WINDOW()
 print(pygameWindow)
