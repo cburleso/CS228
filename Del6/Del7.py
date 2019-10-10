@@ -22,7 +22,7 @@ xMax = -1000.0
 yMin = 1000.0
 yMax = -1000.0
 
-programState = 1
+programState = 0
 
 def Handle_Frame(frame):
     global x, y, xMin, xMax, yMin, yMax
@@ -118,9 +118,20 @@ def HandleState1():
     if HandOverDevice():
         hand = frame.hands[0]
         Handle_Frame(frame)
+        #--------Hand Centering - Using Base of Middle Metacarpal ---------#
+        fingers = hand.fingers
+        targetFinger = fingers[2]
+        targetBone = targetFinger.bone(0) # Middle Metacarpal
+        targetJoint = targetBone.prev_joint
+        xBaseJoint, yBaseJoint = Handle_Vector_From_Leap(targetJoint) # X and Y coordinate of target joint
+        print(xBaseJoint)
+        print(yBaseJoint)
+        print()
+        
     pygameWindow.Reveal()
     if HandOverDevice() == False:
         programState = 0
+    
     
 
 while True:
