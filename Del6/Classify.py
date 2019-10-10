@@ -3,57 +3,54 @@ import numpy as np
 from knn import KNN
 
 
-openTrain0File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_train0.p", 'rb')
-openTest0File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_test0.p", 'rb')
-openTrain0File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Clark_train0.p", 'rb')
-openTest0File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Clark_test0.p", 'rb')
+openTrain0File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_train0.p", 'rb')
+openTest0File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_test0.p", 'rb')
+openTrain0File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Clark_train0.p", 'rb')
+openTest0File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Clark_test0.p", 'rb')
 
-openTrain1File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Genovese_train1.p", 'rb')
-openTest1File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Genovese_test1.p", 'rb')
-openTrain1File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Newton_train1.p", 'rb')
-openTest1File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Newton_test1.p", 'rb')
+openTrain1File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Genovese_train1.p", 'rb')
+openTest1File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Genovese_test1.p", 'rb')
+openTrain1File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Newton_train1.p", 'rb')
+openTest1File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Newton_test1.p", 'rb')
 
-openTrain2File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Gordon_train2.p", 'rb')
-openTest2File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Gordon_test2.p", 'rb')
-openTrain2File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Gordon_train2.p", 'rb')
-openTest2File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Gordon_test2.p", 'rb')
+openTrain2File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Gordon_train2.p", 'rb')
+openTest2File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Gordon_test2.p", 'rb')
+openTrain2File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Gordon_train2.p", 'rb')
+openTest2File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Gordon_test2.p", 'rb')
 
-openTrain3File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Liu_train3.p", 'rb')
-openTest3File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Liu_test3.p", 'rb')
-openTrain3File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Trinity_train3.p", 'rb')
-openTest3File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Trinity_test3.p", 'rb')
+openTrain3File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Liu_train3.p", 'rb')
+openTest3File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Liu_test3.p", 'rb')
+openTrain3File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Trinity_train3.p", 'rb')
+openTest3File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Trinity_test3.p", 'rb')
 
-openTrain4File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Warren_train4.p", 'rb')
-openTest4File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Warren_test4.p", 'rb')
-openTrain4File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Ortigara_train4.p", 'rb')
-openTest4File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Ortigara_test4.p", 'rb')
+openTrain4File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Warren_train4.p", 'rb')
+openTest4File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Warren_test4.p", 'rb')
+openTrain4File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Ortigara_train4.p", 'rb')
+openTest4File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Ortigara_test4.p", 'rb')
 
+openTrain5File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_train5.p", 'rb')
+openTrain6File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_train6.p", 'rb')
+openTest5File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_test5.p", 'rb')
+openTest6File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_test6.p", 'rb')
+openTrain5File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_train5.p", 'rb')
+openTrain6File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_train6.p", 'rb')
+openTest5File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_test5.p", 'rb')
+openTest6File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_test6.p", 'rb')
 
-# ME DATA
-openTrain5File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_train5.p", 'rb')
-openTrain6File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_train6.p", 'rb')
-openTest5File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_test5.p", 'rb')
-openTest6File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_test6.p", 'rb')
-openTrain5File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_train5.p", 'rb')
-openTrain6File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_train6.p", 'rb')
-openTest5File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_test5.p", 'rb')
-openTest6File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_test6.p", 'rb')
+openTrain7File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_train7.p", 'rb')
+openTest7File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_test7.p", 'rb')
+openTrain7File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Yeung_train7.p", 'rb')
+openTest7File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Yeung_test7.p", 'rb')
 
+openTrain8File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Rubin_train8.p", 'rb')
+openTest8File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Rubin_test8.p", 'rb')
+openTrain8File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Mardis_train8.p", 'rb')
+openTest8File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Mardis_test8.p", 'rb')
 
-openTrain7File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_train7.p", 'rb')
-openTest7File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_test7.p", 'rb')
-openTrain7File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Yeung_train7.p", 'rb')
-openTest7File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Yeung_test7.p", 'rb')
-
-openTrain8File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Rubin_train8.p", 'rb')
-openTest8File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Rubin_test8.p", 'rb')
-openTrain8File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Mardis_train8.p", 'rb')
-openTest8File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Mardis_test8.p", 'rb')
-
-openTrain9File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_train9.p", 'rb')
-openTest9File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Burleson_test9.p", 'rb')
-openTrain9File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Lee_train9.p", 'rb')
-openTest9File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del06/userData/Lee_test9.p", 'rb')
+openTrain9File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_train9.p", 'rb')
+openTest9File = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Burleson_test9.p", 'rb')
+openTrain9File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Lee_train9.p", 'rb')
+openTest9File_ = open(r"C:/Users/CHBADMIN/Desktop/LeapDeveloperKit_2.3.1+31549_win/LeapSDK/lib/x86/CS228/Del6/userData/Lee_test9.p", 'rb')
 
 
 
@@ -169,7 +166,7 @@ test6 = CenterData(test6)
 test6_ = pickle.load(openTest6File_)
 test6_ = ReduceData(test6_)
 test6_ = CenterData(test6_)
-#####################
+
 train7 = pickle.load(openTrain7File)
 train7 = ReduceData(train7)
 train7 = CenterData(train7)
@@ -208,11 +205,6 @@ train9_ = CenterData(train9_)
 test9_ = pickle.load(openTest9File_)
 test9_ = ReduceData(test9_)
 test9_ = CenterData(test9_)
-##print(train5.shape)
-##print(train6.shape)
-##print(test5.shape)
-##print(test6.shape)
-
 
     
 def ReshapeData(set0,set1,set2,set3,set4,set5,set6,set7,set8,set9,set10,set11,set12,set13,set14,set15,set16,set17,set18,set19):
