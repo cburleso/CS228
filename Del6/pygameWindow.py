@@ -22,3 +22,19 @@ class PYGAME_WINDOW:
     def drawHandImage(self):
         handImg = pygame.image.load('handOverDevice.jpg')
         self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
+
+    def promptHandLeft(self):
+        handImg = pygame.image.load('moveLeft.png')
+        self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
+
+    def promptHandRight(self):
+        handImg = pygame.image.load('moveRight.png')
+        self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
+
+    def promptHandUp(self):
+        handImg = pygame.image.load('moveUp.png')
+        self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
+
+    def promptHandDown(self):
+        handImg = pygame.image.load('moveDown.png')
+        self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))

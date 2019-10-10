@@ -96,6 +96,26 @@ def DrawImageToHelpUserPutTheirHandOverTheDevice():
     pygameWindow.Prepare()
     pygameWindow.drawHandImage()
     pygameWindow.Reveal()
+
+def promptMoveLeft():
+    pygameWindow.Prepare()
+    pygameWindow.promptHandLeft()
+    pygameWindow.Reveal()
+
+def promptMoveRight():
+    pygameWindow.Prepare()
+    pygameWindow.promptHandRight()
+    pygameWindow.Reveal()
+
+def promptMoveUp():
+    pygameWindow.Prepare()
+    pygameWindow.promptHandUp()
+    pygameWindow.Reveal()
+
+def promptMoveDown():
+    pygameWindow.Prepare()
+    pygameWindow.promptHandDown()
+    pygameWindow.Reveal()
     
 def HandOverDevice():
     frame = controller.frame()
@@ -118,7 +138,9 @@ def HandleState1():
     if HandOverDevice():
         hand = frame.hands[0]
         Handle_Frame(frame)
+        
         #--------Hand Centering - Using Base of Middle Metacarpal ---------#
+        
         fingers = hand.fingers
         targetFinger = fingers[2]
         targetBone = targetFinger.bone(0) # Middle Metacarpal
@@ -127,6 +149,14 @@ def HandleState1():
         print(xBaseJoint)
         print(yBaseJoint)
         print()
+        if (xBaseJoint <= 150):
+            promptMoveRight()
+        if (xBaseJoint >= 200):
+            promptMoveLeft()
+        if (yBaseJoint <= 275):
+            promptMoveDown()
+        if (yBaseJoint >= 325):
+            promptMoveUp()
         
     pygameWindow.Reveal()
     if HandOverDevice() == False:
