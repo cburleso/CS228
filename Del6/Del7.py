@@ -7,10 +7,12 @@ from pygameWindow import PYGAME_WINDOW
 import random
 import numpy as np
 
-clf = pickle.load(open('userData/classifier.p', 'rb'))
-testData = np.zeros((1, 30), dtype = 'f')
+##clf = pickle.load(open('userData/classifier.p', 'rb'))
+##testData = np.zeros((1, 30), dtype = 'f')
 
 controller = Leap.Controller()
+pygameWindow = PYGAME_WINDOW() # Create user display window 
+print(pygameWindow)
 
 x = 400 
 y = 400
@@ -19,6 +21,8 @@ xMin = 1000.0
 xMax = -1000.0
 yMin = 1000.0
 yMax = -1000.0
+
+programState = 1
 
 def Handle_Frame(frame):
     global x, y, xMin, xMax, yMin, yMax
@@ -63,6 +67,7 @@ def Handle_Vector_From_Leap(v):
     return xVal, yVal
 
 def Scale(val, minOldRange, maxOldRange, minNewRange, maxNewRange):
+    maxNewRange = maxNewRange / 2
     diff = val - minOldRange
     oldRange = maxOldRange - minOldRange
     newRange = maxNewRange - minNewRange
@@ -86,49 +91,78 @@ def CenterData(X):
 	X[0,2::3] = allZCoordinates - ZmeanValue
 
 	return X
-    
-pygameWindow = PYGAME_WINDOW()
-print(pygameWindow)
 
-while True: 
+def DrawImageToHelpUserPutTheirHandOverTheDevice():
+    pygameWindow.Prepare()
+    pygameWindow.drawHandImage()
+    pygameWindow.Reveal()
+    
+def HandOverDevice():
+    frame = controller.frame()
+    if (len(frame.hands) > 0):
+        return True
+    else:
+        return False
+    
+def HandleState0():
+    global programState
+    DrawImageToHelpUserPutTheirHandOverTheDevice()
+    if HandOverDevice():
+        programState = 1
+    
+    
+def HandleState1():
+    global programState
     pygameWindow.Prepare() 
     frame = controller.frame() 
-    if (len(frame.hands) > 0):
+    if HandOverDevice():
         hand = frame.hands[0]
         Handle_Frame(frame)
-        k = 0
-        for finger in range(5):
-            finger = hand.fingers[finger]
-            for b in range(4):
-                if b == 0:
-                    bone = finger.bone(Leap.Bone.TYPE_METACARPAL)
-                elif b == 1:
-                    bone = finger.bone(Leap.Bone.TYPE_PROXIMAL)
-                elif b == 2:
-                    bone = finger.bone(Leap.Bone.TYPE_INTERMEDIATE)
-                elif b == 3:
-                    bone = finger.bone(Leap.Bone.TYPE_DISTAL)
-
-                boneBase = bone.prev_joint
-                boneTip = bone.next_joint
-
-                xBase = boneBase[0]
-                yBase = boneBase[1]
-                zBase = boneBase[2]
-                xTip  = boneTip[0]
-                yTip  = boneTip[1]
-                zTip  = boneTip[2]
-                
-                if ((b == 0)or(b == 3)):
-                    testData[0, k] = xTip
-                    testData[0, k+1] = yTip
-                    testData[0, k+2] = zTip
-                    k = k+3
-        #print(testData)
-        testData = CenterData(testData)
-        predictedClass = clf.Predict(testData)
-        print(predictedClass)
-   
     pygameWindow.Reveal()
+    if HandOverDevice() == False:
+        programState = 0
+    
+
+while True:
+    if programState == 0:
+        HandleState0()
+    elif programState == 1:
+        HandleState1()
+    
+    
+##        k = 0
+##        for finger in range(5):
+##            finger = hand.fingers[finger]
+##            for b in range(4):
+##                if b == 0:
+##                    bone = finger.bone(Leap.Bone.TYPE_METACARPAL)
+##                elif b == 1:
+##                    bone = finger.bone(Leap.Bone.TYPE_PROXIMAL)
+##                elif b == 2:
+##                    bone = finger.bone(Leap.Bone.TYPE_INTERMEDIATE)
+##                elif b == 3:
+##                    bone = finger.bone(Leap.Bone.TYPE_DISTAL)
+##
+##                boneBase = bone.prev_joint
+##                boneTip = bone.next_joint
+##
+##                xBase = boneBase[0]
+##                yBase = boneBase[1]
+##                zBase = boneBase[2]
+##                xTip  = boneTip[0]
+##                yTip  = boneTip[1]
+##                zTip  = boneTip[2]
+##                
+##                if ((b == 0)or(b == 3)):
+##                    testData[0, k] = xTip
+##                    testData[0, k+1] = yTip
+##                    testData[0, k+2] = zTip
+##                    k = k+3
+##        #print(testData)
+##        testData = CenterData(testData)
+##        predictedClass = clf.Predict(testData)
+##        print(predictedClass)
+##   
+ 
 
 
