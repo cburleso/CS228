@@ -6,6 +6,7 @@ import pickle
 from pygameWindow import PYGAME_WINDOW 
 import random
 import numpy as np
+import threading
 
 ##clf = pickle.load(open('userData/classifier.p', 'rb'))
 ##testData = np.zeros((1, 30), dtype = 'f')
@@ -163,6 +164,7 @@ def HandleState1():
                 if (yBaseJoint > 250):
                     if (yBaseJoint < 350):
                         promptCenterSuccess()
+                        
                 
         
     pygameWindow.Reveal()
