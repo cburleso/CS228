@@ -39,6 +39,6 @@ class PYGAME_WINDOW:
         handImg = pygame.image.load('moveDown.png')
         self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
 
-    def promptThumbsUp(self):
-        handImg = pygame.image.load('thumbsUp.jpg')
-        self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
+    def promptGreenCheck(self):
+        handImg = pygame.image.load('greenCheck.png')
+        self.screen.blit(handImg, (constants.pygameWindowWidth - 460, 0))

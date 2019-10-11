@@ -115,7 +115,7 @@ def promptMoveDown():
     pygameWindow.Reveal()
 
 def promptCenterSuccess():
-    pygameWindow.promptThumbsUp()
+    pygameWindow.promptGreenCheck()
     pygameWindow.Reveal()
     
     
@@ -151,7 +151,7 @@ def HandleState1():
         print(xBaseJoint)
         print(yBaseJoint)
         print()
-        if (xBaseJoint <= 125):
+        if (xBaseJoint <= 110):
             promptMoveRight()
         if (xBaseJoint >= 225):
             promptMoveLeft()
@@ -159,7 +159,7 @@ def HandleState1():
             promptMoveDown()
         if (yBaseJoint >= 350):
             promptMoveUp()
-        if (xBaseJoint > 125):
+        if (xBaseJoint > 110):
             if (xBaseJoint < 225):
                 if (yBaseJoint > 250):
                     if (yBaseJoint < 350):
