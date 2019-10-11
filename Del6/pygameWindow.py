@@ -38,3 +38,7 @@ class PYGAME_WINDOW:
     def promptHandDown(self):
         handImg = pygame.image.load('moveDown.png')
         self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
+
+    def promptThumbsUp(self):
+        handImg = pygame.image.load('thumbsUp.jpg')
+        self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))

@@ -98,24 +98,25 @@ def DrawImageToHelpUserPutTheirHandOverTheDevice():
     pygameWindow.Reveal()
 
 def promptMoveLeft():
-    pygameWindow.Prepare()
     pygameWindow.promptHandLeft()
     pygameWindow.Reveal()
 
 def promptMoveRight():
-    pygameWindow.Prepare()
     pygameWindow.promptHandRight()
     pygameWindow.Reveal()
 
 def promptMoveUp():
-    pygameWindow.Prepare()
     pygameWindow.promptHandUp()
     pygameWindow.Reveal()
 
 def promptMoveDown():
-    pygameWindow.Prepare()
     pygameWindow.promptHandDown()
     pygameWindow.Reveal()
+
+def promptCenterSuccess():
+    pygameWindow.promptThumbsUp()
+    pygameWindow.Reveal()
+    
     
 def HandOverDevice():
     frame = controller.frame()
@@ -149,14 +150,20 @@ def HandleState1():
         print(xBaseJoint)
         print(yBaseJoint)
         print()
-        if (xBaseJoint <= 150):
+        if (xBaseJoint <= 125):
             promptMoveRight()
-        if (xBaseJoint >= 200):
+        if (xBaseJoint >= 225):
             promptMoveLeft()
-        if (yBaseJoint <= 275):
+        if (yBaseJoint <= 250):
             promptMoveDown()
-        if (yBaseJoint >= 325):
+        if (yBaseJoint >= 350):
             promptMoveUp()
+        if (xBaseJoint > 125):
+            if (xBaseJoint < 225):
+                if (yBaseJoint > 250):
+                    if (yBaseJoint < 350):
+                        promptCenterSuccess()
+                
         
     pygameWindow.Reveal()
     if HandOverDevice() == False:
