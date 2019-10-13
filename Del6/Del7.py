@@ -7,9 +7,10 @@ from pygameWindow import PYGAME_WINDOW
 import random
 import numpy as np
 import threading
+import time 
 
-##clf = pickle.load(open('userData/classifier.p', 'rb'))
-##testData = np.zeros((1, 30), dtype = 'f')
+clf = pickle.load(open('userData/classifier.p', 'rb'))
+testData = np.zeros((1, 30), dtype = 'f')
 
 controller = Leap.Controller()
 pygameWindow = PYGAME_WINDOW() # Create user display window 
@@ -22,6 +23,12 @@ xMin = 1000.0
 xMax = -1000.0
 yMin = 1000.0
 yMax = -1000.0
+
+timer = 0
+randNum = random.randrange(0, 9)
+signCorrect = 0
+
+
 
 programState = 0
 
@@ -93,32 +100,30 @@ def CenterData(X):
 
 	return X
 
+def HandCentered():
+    frame = controller.frame() 
+    centered = True
+    hand = frame.hands[0]
+    fingers = hand.fingers
+    targetFinger = fingers[2]
+    targetBone = targetFinger.bone(0) 
+    targetJoint = targetBone.prev_joint
+    xBaseJoint, yBaseJoint = Handle_Vector_From_Leap(targetJoint)
+    if (xBaseJoint <= 110):
+        centered = False
+    if (xBaseJoint >= 225):
+        centered = False
+    if (yBaseJoint <= 250):
+        centered = False
+    if (yBaseJoint >= 350):
+        centered = False
+    return centered
+
 def DrawImageToHelpUserPutTheirHandOverTheDevice():
     pygameWindow.Prepare()
     pygameWindow.drawHandImage()
     pygameWindow.Reveal()
 
-def promptMoveLeft():
-    pygameWindow.promptHandLeft()
-    pygameWindow.Reveal()
-
-def promptMoveRight():
-    pygameWindow.promptHandRight()
-    pygameWindow.Reveal()
-
-def promptMoveUp():
-    pygameWindow.promptHandUp()
-    pygameWindow.Reveal()
-
-def promptMoveDown():
-    pygameWindow.promptHandDown()
-    pygameWindow.Reveal()
-
-def promptCenterSuccess():
-    pygameWindow.promptGreenCheck()
-    pygameWindow.Reveal()
-    
-    
 def HandOverDevice():
     frame = controller.frame()
     if (len(frame.hands) > 0):
@@ -134,85 +139,129 @@ def HandleState0():
     
     
 def HandleState1():
-    global programState
+    global programState, timer, centered 
     pygameWindow.Prepare() 
     frame = controller.frame() 
-    if HandOverDevice():
-        hand = frame.hands[0]
-        Handle_Frame(frame)
+    if (timer > 100):
+            programState = 2
+    hand = frame.hands[0]
+    Handle_Frame(frame)
         
-        #--------Hand Centering - Using Base of Middle Metacarpal ---------#
-        
-        fingers = hand.fingers
-        targetFinger = fingers[2]
-        targetBone = targetFinger.bone(0) # Middle Metacarpal
-        targetJoint = targetBone.prev_joint
-        xBaseJoint, yBaseJoint = Handle_Vector_From_Leap(targetJoint) # X and Y coordinate of target joint
-        print(xBaseJoint)
-        print(yBaseJoint)
-        print()
-        if (xBaseJoint <= 110):
-            promptMoveRight()
-        if (xBaseJoint >= 225):
-            promptMoveLeft()
-        if (yBaseJoint <= 250):
-            promptMoveDown()
-        if (yBaseJoint >= 350):
-            promptMoveUp()
-        if (xBaseJoint > 110):
-            if (xBaseJoint < 225):
-                if (yBaseJoint > 250):
-                    if (yBaseJoint < 350):
-                        promptCenterSuccess()
-                        
-                
-        
-    pygameWindow.Reveal()
+    fingers = hand.fingers
+    targetFinger = fingers[2]
+    targetBone = targetFinger.bone(0) # Middle Metacarpal
+    targetJoint = targetBone.prev_joint
+    xBaseJoint, yBaseJoint = Handle_Vector_From_Leap(targetJoint) 
+
+    if (xBaseJoint <= 110):
+        pygameWindow.promptHandRight()
+        timer = 0
+    if (xBaseJoint >= 225):
+        pygameWindow.promptHandLeft()
+        timer = 0
+    if (yBaseJoint <= 250):
+        pygameWindow.promptHandDown()
+        timer = 0
+    if (yBaseJoint >= 350):
+        pygameWindow.promptHandUp()
+        timer = 0
+    if (xBaseJoint > 110): # If hand is centered 
+        if (xBaseJoint < 225):
+            if (yBaseJoint > 250):
+                if (yBaseJoint < 350):
+                    pygameWindow.promptGreenCheck()
+                    timer += 1
+                                            
     if HandOverDevice() == False:
         programState = 0
-    
-    
+        timer = 0
 
+    pygameWindow.Reveal()
+    
+    
+def HandleState2():
+    global programState, randNum, testData, clf, signCorrect
+    pygameWindow.Prepare() 
+    if HandOverDevice(): 
+        frame = controller.frame() 
+        hand = frame.hands[0]
+        Handle_Frame(frame)
+        if (HandCentered() == False):
+            programState = 1
+            
+        pygameWindow.promptASLnum(randNum)
+        pygameWindow.promptASLsign(randNum)
+
+        # KNN
+        k = 0
+        for finger in range(5):
+            finger = hand.fingers[finger]
+            for b in range(4):
+                if b == 0:
+                    bone = finger.bone(Leap.Bone.TYPE_METACARPAL)
+                elif b == 1:
+                    bone = finger.bone(Leap.Bone.TYPE_PROXIMAL)
+                elif b == 2:
+                    bone = finger.bone(Leap.Bone.TYPE_INTERMEDIATE)
+                elif b == 3:
+                    bone = finger.bone(Leap.Bone.TYPE_DISTAL)
+
+                boneBase = bone.prev_joint
+                boneTip = bone.next_joint
+
+                xBase = boneBase[0]
+                yBase = boneBase[1]
+                zBase = boneBase[2]
+                xTip  = boneTip[0]
+                yTip  = boneTip[1]
+                zTip  = boneTip[2]
+                
+                if ((b == 0)or(b == 3)):
+                    testData[0, k] = xTip
+                    testData[0, k+1] = yTip
+                    testData[0, k+2] = zTip
+                    k = k+3
+        testData = CenterData(testData)
+        predictedClass = clf.Predict(testData)
+        print(predictedClass)
+        
+        if (predictedClass == randNum):
+            signCorrect += 1
+        else:
+            signCorrect = 0
+            
+        if (signCorrect == 10):
+            programState = 3
+    
+    else:
+        programState = 0
+        
+    pygameWindow.Reveal()
+
+def HandleState3():
+    global programState, randNum 
+    if HandOverDevice():
+        if HandCentered():
+            randNum = random.randrange(0, 9)
+            programState = 2
+        else:
+            programState = 1
+    else:
+        programState = 0
+    
 while True:
     if programState == 0:
         HandleState0()
     elif programState == 1:
         HandleState1()
+    elif programState == 2:
+        HandleState2()
+    elif programState == 3:
+        HandleState3()
     
     
-##        k = 0
-##        for finger in range(5):
-##            finger = hand.fingers[finger]
-##            for b in range(4):
-##                if b == 0:
-##                    bone = finger.bone(Leap.Bone.TYPE_METACARPAL)
-##                elif b == 1:
-##                    bone = finger.bone(Leap.Bone.TYPE_PROXIMAL)
-##                elif b == 2:
-##                    bone = finger.bone(Leap.Bone.TYPE_INTERMEDIATE)
-##                elif b == 3:
-##                    bone = finger.bone(Leap.Bone.TYPE_DISTAL)
-##
-##                boneBase = bone.prev_joint
-##                boneTip = bone.next_joint
-##
-##                xBase = boneBase[0]
-##                yBase = boneBase[1]
-##                zBase = boneBase[2]
-##                xTip  = boneTip[0]
-##                yTip  = boneTip[1]
-##                zTip  = boneTip[2]
-##                
-##                if ((b == 0)or(b == 3)):
-##                    testData[0, k] = xTip
-##                    testData[0, k+1] = yTip
-##                    testData[0, k+2] = zTip
-##                    k = k+3
-##        #print(testData)
-##        testData = CenterData(testData)
-##        predictedClass = clf.Predict(testData)
-##        print(predictedClass)
-##   
+
+   
  
 
 
