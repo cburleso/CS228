@@ -43,6 +43,11 @@ class PYGAME_WINDOW:
         handImg = pygame.image.load('greenCheck.png')
         self.screen.blit(handImg, (constants.pygameWindowWidth - 460, 0))
 
+    def promptThumbsUp(self):
+        handImg = pygame.image.load('thumbsUp.png')
+        handImg = pygame.transform.scale(handImg, (325,325))
+        self.screen.blit(handImg, (constants.pygameWindowWidth - 350, 0))
+
     def promptASLnum(self, mode):
         if mode == 0:
             pic = pygame.image.load('0.png')

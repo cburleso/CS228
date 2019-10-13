@@ -25,8 +25,10 @@ yMin = 1000.0
 yMax = -1000.0
 
 timer = 0
+timer2 = 0
 randNum = random.randrange(0, 9)
 signCorrect = 0
+timer2 = 0
 
 
 
@@ -169,7 +171,7 @@ def HandleState1():
         if (xBaseJoint < 225):
             if (yBaseJoint > 250):
                 if (yBaseJoint < 350):
-                    pygameWindow.promptGreenCheck()
+                    pygameWindow.promptThumbsUp()
                     timer += 1
                                             
     if HandOverDevice() == False:
@@ -239,15 +241,25 @@ def HandleState2():
     pygameWindow.Reveal()
 
 def HandleState3():
-    global programState, randNum 
+    global programState, randNum, timer2
+    randNum = random.randrange(0, 9) # Choose new random digit
+    timer2 += 1
+    pygameWindow.Prepare()
+    frame = controller.frame()
+    Handle_Frame(frame)
+    pygameWindow.promptGreenCheck()
     if HandOverDevice():
         if HandCentered():
-            randNum = random.randrange(0, 9)
-            programState = 2
+            if (timer2 > 100):
+                programState = 2
+                timer2 = 0
         else:
             programState = 1
+            timer2 = 0
     else:
         programState = 0
+        timer2 = 0
+    pygameWindow.Reveal()
     
 while True:
     if programState == 0:
