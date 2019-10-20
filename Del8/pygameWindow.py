@@ -99,9 +99,14 @@ class PYGAME_WINDOW:
         pic = pygame.transform.scale(pic, (375,375))
         self.screen.blit(pic, (375,0))
 
-    def promptNumSeen(self):
+    def promptNumSeen(self, numSeen):
+        # Eye visual
         eyeImg = pygame.image.load('eye.jpg')
         eyeImg = pygame.transform.scale(eyeImg, (170, 170))
-        self.screen.blit(eyeImg, (20, 490))
+        self.screen.blit(eyeImg, (80, 490))
+        # Digit (# seen) visual
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('x' + str(numSeen), True, (0, 0, 0))
+        self.screen.blit(text, (260, 558))
         
         

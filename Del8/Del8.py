@@ -43,9 +43,10 @@ yMax = -1000.0
 
 timer = 0
 timer2 = 0
+randDigitTimer = 0
 randNum = random.randrange(0, 9)
 signCorrect = 0
-timer2 = 0
+
 
 programState = 0
 
@@ -197,7 +198,8 @@ def HandleState1():
     
     
 def HandleState2():
-    global programState, randNum, testData, clf, signCorrect
+    global programState, randNum, testData, clf, signCorrect, randDigitTimer
+    randDigitTimer += 1 # Time viewing random digit 
     database = pickle.load(open('userData/database.p', 'rb'))
     pygameWindow.Prepare() 
     if HandOverDevice(): 
@@ -210,34 +212,70 @@ def HandleState2():
         pygameWindow.promptASLnum(randNum)
         pygameWindow.promptASLsign(randNum)
 
-        if (database[userName]['logins'] == 1): #First time attempting digit
-            userRecord = database[userName]
-            if (randNum == 0):
-                userRecord['digit0attempts'] = 1
-            elif (randNum == 1):
-                userRecord['digit1attempts'] = 1
-            elif (randNum == 2):
-                userRecord['digit2attempts'] = 1
-            elif (randNum == 3):
-                userRecord['digit3attempts'] = 1
-            elif (randNum == 4):
-                userRecord['digit4attempts'] = 1
-            elif (randNum == 5):
-                userRecord['digit5attempts'] = 1
-            elif (randNum == 6):
-                userRecord['digit6attempts'] = 1
-            elif (randNum == 7):
-                userRecord['digit7attempts'] = 1
-            elif (randNum == 8):
-                userRecord['digit8attempts'] = 1
-            elif (randNum == 9):
-                userRecord['digit9attempts'] = 1
-
-            pickle.dump(database, open('userData/database.p', 'wb'))
-
         
+        userRecord = database[userName]
+        if (randNum == 0):
+            try:
+                numSeen = database[userName]['digit0attempts']
+            except:
+                userRecord['digit0attempts'] = 1
+                numSeen = 1
+        elif (randNum == 1):
+            try:
+                numSeen = database[userName]['digit1attempts']
+            except:
+                userRecord['digit1attempts'] = 1
+                numSeen = 1
+        elif (randNum == 2):
+            try:
+                numSeen = database[userName]['digit2attempts']
+            except:
+                userRecord['digit2attempts'] = 1
+                numSeen = 1
+        elif (randNum == 3):
+            try:
+                numSeen = database[userName]['digit3attempts']
+            except:
+                userRecord['digit3attempts'] = 1
+                numSeen = 1
+        elif (randNum == 4):
+            try:
+                numSeen = database[userName]['digit4attempts']
+            except:
+                userRecord['digit4attempts'] = 1
+                numSeen = 1
+        elif (randNum == 5):
+            try:
+                numSeen = database[userName]['digit5attempts']
+            except:
+                userRecord['digit5attempts'] = 1
+                numSeen = 1
+        elif (randNum == 6):
+            try:
+                numSeen = database[userName]['digit6attempts']
+            except:
+                userRecord['digit6attempts'] = 1
+                numSeen = 1
+        elif (randNum == 7):
+            try:
+                numSeen = database[userName]['digit7attempts']
+            except:
+                userRecord['digit7attempts'] = 1
+                numSeen = 1
+        elif (randNum == 8):
+            try:
+                numSeen = database[userName]['digit8attempts']
+            except:
+                userRecord['digit8attempts'] = 1
+                numSeen = 1
+        elif (randNum == 9):
+            try:
+                numSeen = database[userName]['digit9attempts']
+            except:
+                userRecord['digit9attempts'] = 1
+                numSeen = 1
                     
-        pygameWindow.promptNumSeen()
+        pygameWindow.promptNumSeen(numSeen)
 
         # KNN
         k = 0
@@ -277,9 +315,35 @@ def HandleState2():
         else:
             signCorrect = 0
             
-        if (signCorrect == 10):
-            programState = 3
-    
+        #if (signCorrect == 10):   FUNCTIONALITY REMOVED (from Del 7)
+            #programState = 3
+
+        if (randDigitTimer > 15):   # NEW FUNCTIONALITY (for Del 8)
+            if (randNum == 0):
+                database[userName]['digit0attempts'] += 1
+            elif (randNum == 1):
+                database[userName]['digit1attempts'] += 1
+            elif (randNum == 2):
+                database[userName]['digit2attempts'] += 1
+            elif (randNum == 3):
+                database[userName]['digit3attempts'] += 1
+            elif (randNum == 4):
+                database[userName]['digit4attempts'] += 1
+            elif (randNum == 5):
+                database[userName]['digit5attempts'] += 1
+            elif (randNum == 6):
+                database[userName]['digit6attempts'] += 1
+            elif (randNum == 7):
+                database[userName]['digit7attempts'] += 1
+            elif (randNum == 8):
+                database[userName]['digit8attempts'] += 1
+            elif (randNum == 9):
+                database[userName]['digit9attempts'] += 1
+
+            pickle.dump(database, open('userData/database.p', 'wb'))
+            randNum = random.randrange(0, 9) # Choose new random digit
+            randDigitTimer = 0
+            
     else:
         programState = 0
         
