@@ -198,6 +198,7 @@ def HandleState1():
     
 def HandleState2():
     global programState, randNum, testData, clf, signCorrect
+    database = pickle.load(open('userData/database.p', 'rb'))
     pygameWindow.Prepare() 
     if HandOverDevice(): 
         frame = controller.frame() 
@@ -208,6 +209,34 @@ def HandleState2():
             
         pygameWindow.promptASLnum(randNum)
         pygameWindow.promptASLsign(randNum)
+
+        if (database[userName]['logins'] == 1): #First time attempting digit
+            userRecord = database[userName]
+            if (randNum == 0):
+                userRecord['digit0attempts'] = 1
+            elif (randNum == 1):
+                userRecord['digit1attempts'] = 1
+            elif (randNum == 2):
+                userRecord['digit2attempts'] = 1
+            elif (randNum == 3):
+                userRecord['digit3attempts'] = 1
+            elif (randNum == 4):
+                userRecord['digit4attempts'] = 1
+            elif (randNum == 5):
+                userRecord['digit5attempts'] = 1
+            elif (randNum == 6):
+                userRecord['digit6attempts'] = 1
+            elif (randNum == 7):
+                userRecord['digit7attempts'] = 1
+            elif (randNum == 8):
+                userRecord['digit8attempts'] = 1
+            elif (randNum == 9):
+                userRecord['digit9attempts'] = 1
+
+            pickle.dump(database, open('userData/database.p', 'wb'))
+
+        
+                    
         pygameWindow.promptNumSeen()
 
         # KNN
@@ -258,7 +287,6 @@ def HandleState2():
 
 def HandleState3():
     global programState, randNum, timer2
-    randNum = random.randrange(0, 9) # Choose new random digit
     timer2 += 1
     pygameWindow.Prepare()
     frame = controller.frame()
@@ -267,6 +295,7 @@ def HandleState3():
     if HandOverDevice():
         if HandCentered():
             if (timer2 > 100):
+                randNum = random.randrange(0, 9) # Choose new random digit
                 programState = 2
                 timer2 = 0
         else:
