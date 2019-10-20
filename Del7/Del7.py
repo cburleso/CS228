@@ -30,8 +30,6 @@ randNum = random.randrange(0, 9)
 signCorrect = 0
 timer2 = 0
 
-
-
 programState = 0
 
 def Handle_Frame(frame):
