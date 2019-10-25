@@ -41,11 +41,17 @@ xMax = -1000.0
 yMin = 1000.0
 yMax = -1000.0
 
-timer = 0
-timer2 = 0
+handCenteredTimer = 0
+greenCheckTimer = 0
 randDigitTimer = 0
-randNum = random.randrange(0, 9)
 signCorrect = 0
+
+numIndex = 0
+levelOneNums = [0, 1, 2, 3]
+#digitToSign = random.randrange(0, 9) # Initial digit to sign
+digitToSign = levelOneNums[numIndex]
+
+
 
 
 programState = 0
@@ -157,10 +163,10 @@ def HandleState0():
     
     
 def HandleState1():
-    global programState, timer, centered 
+    global programState, handCenteredTimer
     pygameWindow.Prepare() 
     frame = controller.frame() 
-    if (timer > 100):
+    if (handCenteredTimer > 100):
             programState = 2
     hand = frame.hands[0]
     Handle_Frame(frame)
@@ -173,32 +179,32 @@ def HandleState1():
 
     if (xBaseJoint <= 110):
         pygameWindow.promptHandRight()
-        timer = 0
+        handCenteredTimer = 0
     if (xBaseJoint >= 225):
         pygameWindow.promptHandLeft()
-        timer = 0
+        handCenteredTimer = 0
     if (yBaseJoint <= 250):
         pygameWindow.promptHandDown()
-        timer = 0
+        handCenteredTimer = 0
     if (yBaseJoint >= 350):
         pygameWindow.promptHandUp()
-        timer = 0
+        handCenteredTimer = 0
     if (xBaseJoint > 110): # If hand is centered 
         if (xBaseJoint < 225):
             if (yBaseJoint > 250):
                 if (yBaseJoint < 350):
                     pygameWindow.promptThumbsUp()
-                    timer += 1
+                    handCenteredTimer += 1
                                             
     if HandOverDevice() == False:
         programState = 0
-        timer = 0
+        handCenteredTimer = 0
 
     pygameWindow.Reveal()
     
     
 def HandleState2():
-    global programState, randNum, testData, clf, signCorrect, randDigitTimer
+    global programState, digitToSign, testData, clf, signCorrect, randDigitTimer, handCenteredTimer, levelOneNums, numIndex
     randDigitTimer += 1 # Time viewing random digit 
     database = pickle.load(open('userData/database.p', 'rb'))
     pygameWindow.Prepare() 
@@ -207,73 +213,20 @@ def HandleState2():
         hand = frame.hands[0]
         Handle_Frame(frame)
         if (HandCentered() == False):
+            handCenteredTimer = 0
             programState = 1
             
-        pygameWindow.promptASLnum(randNum)
-        pygameWindow.promptASLsign(randNum)
+        pygameWindow.promptASLnum(digitToSign)
+        pygameWindow.promptASLsign(digitToSign)
 
-        
+        # Get number of times user has been presented with digit
         userRecord = database[userName]
-        if (randNum == 0):
-            try:
-                numSeen = database[userName]['digit0attempts']
-            except:
-                userRecord['digit0attempts'] = 1
-                numSeen = 1
-        elif (randNum == 1):
-            try:
-                numSeen = database[userName]['digit1attempts']
-            except:
-                userRecord['digit1attempts'] = 1
-                numSeen = 1
-        elif (randNum == 2):
-            try:
-                numSeen = database[userName]['digit2attempts']
-            except:
-                userRecord['digit2attempts'] = 1
-                numSeen = 1
-        elif (randNum == 3):
-            try:
-                numSeen = database[userName]['digit3attempts']
-            except:
-                userRecord['digit3attempts'] = 1
-                numSeen = 1
-        elif (randNum == 4):
-            try:
-                numSeen = database[userName]['digit4attempts']
-            except:
-                userRecord['digit4attempts'] = 1
-                numSeen = 1
-        elif (randNum == 5):
-            try:
-                numSeen = database[userName]['digit5attempts']
-            except:
-                userRecord['digit5attempts'] = 1
-                numSeen = 1
-        elif (randNum == 6):
-            try:
-                numSeen = database[userName]['digit6attempts']
-            except:
-                userRecord['digit6attempts'] = 1
-                numSeen = 1
-        elif (randNum == 7):
-            try:
-                numSeen = database[userName]['digit7attempts']
-            except:
-                userRecord['digit7attempts'] = 1
-                numSeen = 1
-        elif (randNum == 8):
-            try:
-                numSeen = database[userName]['digit8attempts']
-            except:
-                userRecord['digit8attempts'] = 1
-                numSeen = 1
-        elif (randNum == 9):
-            try:
-                numSeen = database[userName]['digit9attempts']
-            except:
-                userRecord['digit9attempts'] = 1
-                numSeen = 1
+        attemptsDict = 'digit' + str(digitToSign) + 'attempts'
+        try:
+            numSeen = database[userName][attemptsDict]
+        except:
+            userRecord[attemptsDict] = 1
+            numSeen = 1
                     
         pygameWindow.promptNumSeen(numSeen)
 
@@ -310,64 +263,72 @@ def HandleState2():
         predictedClass = clf.Predict(testData)
         print(predictedClass)
         
-        if (predictedClass == randNum):
+        if (predictedClass == digitToSign):
             signCorrect += 1
         else:
             signCorrect = 0
-            
-        #if (signCorrect == 10):   FUNCTIONALITY REMOVED (from Del 7)
-            #programState = 3
 
-        if (randDigitTimer > 15):   # NEW FUNCTIONALITY (for Del 8)
-            if (randNum == 0):
-                database[userName]['digit0attempts'] += 1
-            elif (randNum == 1):
-                database[userName]['digit1attempts'] += 1
-            elif (randNum == 2):
-                database[userName]['digit2attempts'] += 1
-            elif (randNum == 3):
-                database[userName]['digit3attempts'] += 1
-            elif (randNum == 4):
-                database[userName]['digit4attempts'] += 1
-            elif (randNum == 5):
-                database[userName]['digit5attempts'] += 1
-            elif (randNum == 6):
-                database[userName]['digit6attempts'] += 1
-            elif (randNum == 7):
-                database[userName]['digit7attempts'] += 1
-            elif (randNum == 8):
-                database[userName]['digit8attempts'] += 1
-            elif (randNum == 9):
-                database[userName]['digit9attempts'] += 1
-
+        if (randDigitTimer > 25): # Change digit and increment attempt if not signed correctly
+            database[userName][attemptsDict] += 1 # Increment user attempt at digit 
             pickle.dump(database, open('userData/database.p', 'wb'))
-            randNum = random.randrange(0, 9) # Choose new random digit
+            #digitToSign = random.randrange(0, 9)
+
+            if (numIndex == 3):
+                numIndex = 0
+            else:
+                numIndex += 1
+                
+            digitToSign = levelOneNums[numIndex]
+            
             randDigitTimer = 0
+            
+            
+        if (signCorrect == 10): # User successfully signed digit (recognized by KNN 10 times)
+            successesDict = 'digit' + str(digitToSign) + 'successes'
+            try:
+                database[userName][successesDict] += 1
+            except:
+                userRecord[successesDict] = 1
+                
+            database[userName][attemptsDict] += 1 # Increment user attempt at digit
+            pickle.dump(database, open('userData/database.p', 'wb'))
+            randDigitTimer = 0
+            
+            if (numIndex == 3):
+                numIndex = 0
+            else:
+                numIndex += 1
+                    
+            digitToSign = levelOneNums[numIndex]
+            
+            programState = 3
             
     else:
         programState = 0
         
     pygameWindow.Reveal()
 
-def HandleState3():
-    global programState, randNum, timer2
-    timer2 += 1
+def HandleState3(): # User 
+    global programState, randNum, greenCheckTimer, numIndex, levelOneNums
+    greenCheckTimer += 1
     pygameWindow.Prepare()
     frame = controller.frame()
     Handle_Frame(frame)
     pygameWindow.promptGreenCheck()
     if HandOverDevice():
         if HandCentered():
-            if (timer2 > 100):
-                randNum = random.randrange(0, 9) # Choose new random digit
+            if (greenCheckTimer > 100):
+                #digitToSign = random.randrange(0, 9)
+                
                 programState = 2
-                timer2 = 0
+                
+                greenCheckTimer = 0
         else:
             programState = 1
-            timer2 = 0
+            greenCheckTimer = 0
     else:
         programState = 0
-        timer2 = 0
+        greenCheckTimer = 0
     pygameWindow.Reveal()
 
 # Main program loop 
