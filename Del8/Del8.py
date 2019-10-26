@@ -20,6 +20,9 @@ if userName in database:
 
 else:
     database[userName] = {'logins' : 1}
+    userProgress = database[userName]
+    userProgress['currDigitDict'] = [0, 1, 2]
+    #database[userName] = {'currDigitDict' : [0, 1, 2]}
     print('Welcome, ' + userName + '.')
 
 print(database)
@@ -45,14 +48,11 @@ handCenteredTimer = 0
 greenCheckTimer = 0
 randDigitTimer = 0
 signCorrect = 0
+signTimer = 0
 
 numIndex = 0
-currDigitList = [0, 1, 2]
+currDigitList = database[userName]['currDigitDict']
 digitToSign = currDigitList[numIndex] # Initial digit to sign 
-
-
-
-
 programState = 0
 
 def Handle_Frame(frame):
@@ -203,11 +203,12 @@ def HandleState1():
     
     
 def HandleState2():
-    global programState, digitToSign, testData, clf, signCorrect, randDigitTimer, handCenteredTimer, currDigitList, numIndex
-    randDigitTimer += 1 # Time viewing random digit 
-    database = pickle.load(open('userData/database.p', 'rb'))
+    global programState, digitToSign, testData, clf, signCorrect, randDigitTimer, handCenteredTimer, currDigitList, numIndex, signTimer 
+    randDigitTimer += 1 # Time viewing random digit
+    signTimer += 1 # Time viewing ASL sign
+    #database = pickle.load(open('userData/database.p', 'rb'))
     pygameWindow.Prepare() 
-    if HandOverDevice(): 
+    if HandOverDevice():
         frame = controller.frame() 
         hand = frame.hands[0]
         Handle_Frame(frame)
@@ -215,12 +216,14 @@ def HandleState2():
             handCenteredTimer = 0
             programState = 1
             
-        pygameWindow.promptASLnum(digitToSign)
-        pygameWindow.promptASLsign(digitToSign)
-
         attemptsDict = 'digit' + str(digitToSign) + 'attempts'
         successesDict = 'digit' + str(digitToSign) + 'successes'
+        
+        if (signTimer < 10):
+            pygameWindow.promptASLsign(digitToSign)
 
+        pygameWindow.promptASLnum(digitToSign)
+        
         # Get number of times user has been presented with digit
         userRecord = database[userName]
         try:
@@ -268,50 +271,19 @@ def HandleState2():
             signCorrect += 1
         else:
             signCorrect = 0
-
-        # Check if user passed 'level one' (digits 0 through 2)
-        levelOnePass = False
-        for digit in range(3):
-            try:
-                digitDict = 'digit' + str(digit) + 'successes'
-                if (database[userName][digitDict] > 0):
-                    levelOnePass = True
-                else:
-                    levelOnePass = False
-                    break
-            except:
-                levelOnePass = False
-                
-        if (levelOnePass): # Increment number of digits to sign 
-            currDigitList = [0, 1, 2, 3, 4, 5]
-
-        # Check if user passed 'level two' (digits 0 through 5)
-        levelTwoPass = False
-        for digit in range(3, 6):
-            try:
-                digitDict = 'digit' + str(digit) + 'successes'
-                if (database[userName][digitDict] > 0):
-                    levelTwoPass = True
-                else:
-                    levelTwoPass = False
-                    break
-            except:
-                levelTwoPass = False
-                
-        if (levelTwoPass): # Increment number of digits to sign (all ten)
-            currDigitList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
             
-        if (randDigitTimer > 25): # Change digit and increment attempt if not signed correctly
+        if (randDigitTimer > 30): # Change digit and increment attempt if not signed correctly
             database[userName][attemptsDict] += 1 # Increment user attempt at digit 
             pickle.dump(database, open('userData/database.p', 'wb'))
             # Change digit 
-            if (numIndex == len(currDigitList) - 1):
+            if (numIndex == len(database[userName]['currDigitDict']) - 1):
                 numIndex = 0
             else:
                 numIndex += 1
                 
-            digitToSign = currDigitList[numIndex]
+            digitToSign = database[userName]['currDigitDict'][numIndex]
             randDigitTimer = 0
+            signTimer = 0
             
             
         if (signCorrect == 10): # User successfully signed digit (recognized by KNN 10 times)
@@ -321,18 +293,53 @@ def HandleState2():
                 userRecord[successesDict] = 1
                 
             database[userName][attemptsDict] += 1 # Increment user attempt at digit
-            pickle.dump(database, open('userData/database.p', 'wb'))
             randDigitTimer = 0
-            # Change digit 
-            if (numIndex == len(currDigitList) - 1):
+
+            # Check if user passed 'level one' (digits 0 through 2)
+            levelOnePass = True
+            for digit in range(3):
+                try:
+                    digitDict = 'digit' + str(digit) + 'successes'
+                    if (database[userName][digitDict] < 1):
+                        levelOnePass = False
+                        break
+                except:
+                    levelOnePass = False
+                    break
+                
+            if (levelOnePass): # Change subset of digits shown to three new (3 through 5)
+                database[userName]['currDigitDict'] = [0, 1, 2, 3, 4, 5]
+
+            # Check if user passed 'level two' (digits 3 through 5)
+            levelTwoPass = True
+            for digit in range(3, 6):
+                try:
+                    digitDict = 'digit' + str(digit) + 'successes'
+                    if (database[userName][digitDict] < 1):
+                        levelTwoPass = False
+                        break
+                except:
+                    levelTwoPass = False
+                    break
+                
+            if (levelTwoPass): # Change subset of digits shown to four new (6 through 9) * all digits 
+                database[userName]['currDigitDict'] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+            # Increment to next digit in the list  
+            if (numIndex == len(database[userName]['currDigitDict']) - 1):
                 numIndex = 0
             else:
                 numIndex += 1
-            digitToSign = currDigitList[numIndex]
+            digitToSign = database[userName]['currDigitDict'][numIndex]
+            pickle.dump(database, open('userData/database.p', 'wb'))
+            signTimer = 0
             programState = 3
+
             
     else:
         programState = 0
+        randDigitTimer = 0
+        signTimer = 0
         
     pygameWindow.Reveal()
 
