@@ -47,9 +47,8 @@ randDigitTimer = 0
 signCorrect = 0
 
 numIndex = 0
-levelOneNums = [0, 1, 2, 3]
-#digitToSign = random.randrange(0, 9) # Initial digit to sign
-digitToSign = levelOneNums[numIndex]
+currDigitList = [0, 1, 2]
+digitToSign = currDigitList[numIndex] # Initial digit to sign 
 
 
 
@@ -204,7 +203,7 @@ def HandleState1():
     
     
 def HandleState2():
-    global programState, digitToSign, testData, clf, signCorrect, randDigitTimer, handCenteredTimer, levelOneNums, numIndex
+    global programState, digitToSign, testData, clf, signCorrect, randDigitTimer, handCenteredTimer, currDigitList, numIndex
     randDigitTimer += 1 # Time viewing random digit 
     database = pickle.load(open('userData/database.p', 'rb'))
     pygameWindow.Prepare() 
@@ -219,9 +218,11 @@ def HandleState2():
         pygameWindow.promptASLnum(digitToSign)
         pygameWindow.promptASLsign(digitToSign)
 
+        attemptsDict = 'digit' + str(digitToSign) + 'attempts'
+        successesDict = 'digit' + str(digitToSign) + 'successes'
+
         # Get number of times user has been presented with digit
         userRecord = database[userName]
-        attemptsDict = 'digit' + str(digitToSign) + 'attempts'
         try:
             numSeen = database[userName][attemptsDict]
         except:
@@ -268,23 +269,52 @@ def HandleState2():
         else:
             signCorrect = 0
 
+        # Check if user passed 'level one' (digits 0 through 2)
+        levelOnePass = False
+        for digit in range(3):
+            try:
+                digitDict = 'digit' + str(digit) + 'successes'
+                if (database[userName][digitDict] > 0):
+                    levelOnePass = True
+                else:
+                    levelOnePass = False
+                    break
+            except:
+                levelOnePass = False
+                
+        if (levelOnePass): # Increment number of digits to sign 
+            currDigitList = [0, 1, 2, 3, 4, 5]
+
+        # Check if user passed 'level two' (digits 0 through 5)
+        levelTwoPass = False
+        for digit in range(3, 6):
+            try:
+                digitDict = 'digit' + str(digit) + 'successes'
+                if (database[userName][digitDict] > 0):
+                    levelTwoPass = True
+                else:
+                    levelTwoPass = False
+                    break
+            except:
+                levelTwoPass = False
+                
+        if (levelTwoPass): # Increment number of digits to sign (all ten)
+            currDigitList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            
         if (randDigitTimer > 25): # Change digit and increment attempt if not signed correctly
             database[userName][attemptsDict] += 1 # Increment user attempt at digit 
             pickle.dump(database, open('userData/database.p', 'wb'))
-            #digitToSign = random.randrange(0, 9)
-
-            if (numIndex == 3):
+            # Change digit 
+            if (numIndex == len(currDigitList) - 1):
                 numIndex = 0
             else:
                 numIndex += 1
                 
-            digitToSign = levelOneNums[numIndex]
-            
+            digitToSign = currDigitList[numIndex]
             randDigitTimer = 0
             
             
         if (signCorrect == 10): # User successfully signed digit (recognized by KNN 10 times)
-            successesDict = 'digit' + str(digitToSign) + 'successes'
             try:
                 database[userName][successesDict] += 1
             except:
@@ -293,14 +323,12 @@ def HandleState2():
             database[userName][attemptsDict] += 1 # Increment user attempt at digit
             pickle.dump(database, open('userData/database.p', 'wb'))
             randDigitTimer = 0
-            
-            if (numIndex == 3):
+            # Change digit 
+            if (numIndex == len(currDigitList) - 1):
                 numIndex = 0
             else:
                 numIndex += 1
-                    
-            digitToSign = levelOneNums[numIndex]
-            
+            digitToSign = currDigitList[numIndex]
             programState = 3
             
     else:
@@ -308,7 +336,7 @@ def HandleState2():
         
     pygameWindow.Reveal()
 
-def HandleState3(): # User 
+def HandleState3(): # To show 'success' check mark when user correctly signs digit 
     global programState, randNum, greenCheckTimer, numIndex, levelOneNums
     greenCheckTimer += 1
     pygameWindow.Prepare()
@@ -318,10 +346,7 @@ def HandleState3(): # User
     if HandOverDevice():
         if HandCentered():
             if (greenCheckTimer > 100):
-                #digitToSign = random.randrange(0, 9)
-                
                 programState = 2
-                
                 greenCheckTimer = 0
         else:
             programState = 1
