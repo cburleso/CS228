@@ -46,7 +46,7 @@ yMax = -1000.0
 
 handCenteredTimer = 0
 greenCheckTimer = 0
-randDigitTimer = 0
+digitTimer = 0
 signCorrect = 0
 signTimer = 0
 
@@ -203,8 +203,8 @@ def HandleState1():
     
     
 def HandleState2():
-    global programState, digitToSign, testData, clf, signCorrect, randDigitTimer, handCenteredTimer, currDigitList, numIndex, signTimer 
-    randDigitTimer += 1 # Time viewing random digit
+    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer 
+    digitTimer += 1 # Time viewing random digit
     signTimer += 1 # Time viewing ASL sign
     #database = pickle.load(open('userData/database.p', 'rb'))
     pygameWindow.Prepare() 
@@ -218,8 +218,22 @@ def HandleState2():
             
         attemptsDict = 'digit' + str(digitToSign) + 'attempts'
         successesDict = 'digit' + str(digitToSign) + 'successes'
-        
-        if (signTimer < 10):
+
+        # Determine how long ASL gesture should be presented to user (depending on number of successes
+        # with the current digit to sign)
+        try:
+            if (database[userName][successesDict] == 1):
+                signTimerLimit = 15
+            elif (database[userName][successesDict] == 2):
+                signTimerLimit = 8
+            elif (database[userName][successesDict] > 2):
+                signTimerLimit = 0
+            else:
+                signTimerLimit = 100 # Show ASL gesture the entire time 
+        except:
+            signTimerLimit = 100
+            
+        if (signTimer < signTimerLimit):
             pygameWindow.promptASLsign(digitToSign)
 
         pygameWindow.promptASLnum(digitToSign)
@@ -272,7 +286,7 @@ def HandleState2():
         else:
             signCorrect = 0
             
-        if (randDigitTimer > 30): # Change digit and increment attempt if not signed correctly
+        if (digitTimer > 30): # Change digit and increment attempt if not signed correctly
             database[userName][attemptsDict] += 1 # Increment user attempt at digit 
             pickle.dump(database, open('userData/database.p', 'wb'))
             # Change digit 
@@ -282,7 +296,7 @@ def HandleState2():
                 numIndex += 1
                 
             digitToSign = database[userName]['currDigitDict'][numIndex]
-            randDigitTimer = 0
+            digitTimer = 0
             signTimer = 0
             
             
@@ -293,7 +307,7 @@ def HandleState2():
                 userRecord[successesDict] = 1
                 
             database[userName][attemptsDict] += 1 # Increment user attempt at digit
-            randDigitTimer = 0
+            digitTimer = 0
 
             # Check if user passed 'level one' (digits 0 through 2)
             levelOnePass = True
@@ -338,7 +352,7 @@ def HandleState2():
             
     else:
         programState = 0
-        randDigitTimer = 0
+        digitTimer = 0
         signTimer = 0
         
     pygameWindow.Reveal()
