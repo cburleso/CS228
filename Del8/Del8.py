@@ -220,18 +220,27 @@ def HandleState2():
         successesDict = 'digit' + str(digitToSign) + 'successes'
 
         # Determine how long ASL gesture should be presented to user (depending on number of successes
-        # with the current digit to sign)
+        # with the current digit to sign) & length of time they have to sign the gesture 
         try:
-            if (database[userName][successesDict] == 1):
+            if (database[userName][successesDict] < 1):
+                digitTimerLimit = 30
+            elif (database[userName][successesDict] == 1):
                 signTimerLimit = 15
+                digitTimerLimit = 30
             elif (database[userName][successesDict] == 2):
                 signTimerLimit = 8
+                digitTimerLimit = 30
             elif (database[userName][successesDict] > 2):
                 signTimerLimit = 0
+                digitTimerLimit = 15 # Decrease time user has to sign digit
+            elif (database[userName][successesDict] > 3):
+                digitTimerLimit = 10
             else:
-                signTimerLimit = 100 # Show ASL gesture the entire time 
+                signTimerLimit = 100 # Show ASL gesture the entire time
+                digitTimerLimit = 30
         except:
             signTimerLimit = 100
+            digitTimerLimit = 30
             
         if (signTimer < signTimerLimit):
             pygameWindow.promptASLsign(digitToSign)
@@ -286,7 +295,7 @@ def HandleState2():
         else:
             signCorrect = 0
             
-        if (digitTimer > 30): # Change digit and increment attempt if not signed correctly
+        if (digitTimer > digitTimerLimit): # Change digit and increment attempt if not signed correctly
             database[userName][attemptsDict] += 1 # Increment user attempt at digit 
             pickle.dump(database, open('userData/database.p', 'wb'))
             # Change digit 
