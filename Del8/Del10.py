@@ -301,8 +301,10 @@ def HandleState2():
         print(predictedClass)
         
         if (predictedClass == digitToSign):
+            pygameWindow.promptFlame()
             signCorrect += 1
         else:
+            pygameWindow.promptIce()
             signCorrect = 0
             
         if (digitTimer > digitTimerLimit): # Change digit and increment attempt if not signed correctly

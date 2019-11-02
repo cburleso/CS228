@@ -120,11 +120,11 @@ class PYGAME_WINDOW:
         # Green check visual
         checkImg = pygame.image.load('greenCheck.png')
         checkImg = pygame.transform.scale(checkImg, (160, 160))
-        self.screen.blit(checkImg, (160, 470))
+        self.screen.blit(checkImg, (140, 470))
         # Digit (# successes) visual
         font = pygame.font.Font('freesansbold.ttf', 32)
         text = font.render('x' + str(numSuccess), True, (0, 0, 0))
-        self.screen.blit(text, (270, 538))
+        self.screen.blit(text, (250, 538))
         
 
     def promptCurrCoinBag(self, numCoins):
@@ -152,6 +152,16 @@ class PYGAME_WINDOW:
         font2 = pygame.font.Font('freesansbold.ttf', 32)
         text2 = font2.render(str(prevNumCoins), True, (255, 0, 0))
         self.screen.blit(text2, (285, 635))
+
+    def promptFlame(self):
+        flameImg = pygame.image.load('flame.jpg')
+        flameImg = pygame.transform.scale(flameImg, (75, 120))
+        self.screen.blit(flameImg, (345, 458))
+
+    def promptIce(self):
+        iceImg = pygame.image.load('ice.png')
+        iceImg = pygame.transform.scale(iceImg, (140, 120))
+        self.screen.blit(iceImg, (295, 470))
         
         
         
