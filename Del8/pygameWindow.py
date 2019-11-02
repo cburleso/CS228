@@ -42,6 +42,13 @@ class PYGAME_WINDOW:
     def promptGreenCheck(self):
         handImg = pygame.image.load('greenCheck.png')
         self.screen.blit(handImg, (constants.pygameWindowWidth - 460, 0))
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('+', True, (0, 255, 0))
+        self.screen.blit(text, (520, 150))
+        # Coin visual
+        coinImg = pygame.image.load('goldCoin.png')
+        coinImg = pygame.transform.scale(coinImg, (50, 50))
+        self.screen.blit(coinImg, (540, 140))
 
     def promptThumbsUp(self):
         handImg = pygame.image.load('thumbsUp.png')
@@ -102,11 +109,49 @@ class PYGAME_WINDOW:
     def promptNumSeen(self, numSeen):
         # Eye visual
         eyeImg = pygame.image.load('eye.jpg')
-        eyeImg = pygame.transform.scale(eyeImg, (170, 170))
-        self.screen.blit(eyeImg, (80, 490))
+        eyeImg = pygame.transform.scale(eyeImg, (130, 130))
+        self.screen.blit(eyeImg, (0, 470))
         # Digit (# seen) visual
         font = pygame.font.Font('freesansbold.ttf', 32)
         text = font.render('x' + str(numSeen), True, (0, 0, 0))
-        self.screen.blit(text, (260, 558))
+        self.screen.blit(text, (120, 538))
+
+    def promptNumSuccess(self, numSuccess):
+        # Green check visual
+        checkImg = pygame.image.load('greenCheck.png')
+        checkImg = pygame.transform.scale(checkImg, (160, 160))
+        self.screen.blit(checkImg, (160, 470))
+        # Digit (# successes) visual
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('x' + str(numSuccess), True, (0, 0, 0))
+        self.screen.blit(text, (270, 538))
+        
+
+    def promptCurrCoinBag(self, numCoins):
+        # Money bag check visual
+        bagImg = pygame.image.load('moneyBag.jpg')
+        bagImg = pygame.transform.scale(bagImg, (90, 70))
+        self.screen.blit(bagImg, (0, 600))
+        # Coin visual
+        coinImg = pygame.image.load('goldCoin.png')
+        coinImg = pygame.transform.scale(coinImg, (50, 50))
+        self.screen.blit(coinImg, (120, 610))
+        # Digit (# coins) visual
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('x' + str(numCoins), True, (0, 0, 0))
+        self.screen.blit(text, (175, 630))
+        # Colon between coin pic and number
+        font2 = pygame.font.Font('freesansbold.ttf', 32)
+        text2 = font2.render(':', True, (0, 0, 0))
+        self.screen.blit(text2, (95, 618))
+
+    def promptPrevCoins(self, prevNumCoins):
+        font = pygame.font.Font('freesansbold.ttf', 16)
+        text = font.render('Coins Prev. Session:', True, (0, 0, 0))
+        self.screen.blit(text, (230, 615))
+        font2 = pygame.font.Font('freesansbold.ttf', 32)
+        text2 = font2.render(str(prevNumCoins), True, (255, 0, 0))
+        self.screen.blit(text2, (285, 635))
+        
         
         
