@@ -77,8 +77,8 @@ class PYGAME_WINDOW:
         else:
             pic = pygame.image.load('9.png')
             
-        pic = pygame.transform.scale(pic, (375,375))
-        self.screen.blit(pic, (375,375))
+        pic = pygame.transform.scale(pic, (375, 375))
+        self.screen.blit(pic, (375, 0))
        
             
     def promptASLsign(self, mode):
@@ -103,8 +103,8 @@ class PYGAME_WINDOW:
         else:
             pic = pygame.image.load('asl9.png')
 
-        pic = pygame.transform.scale(pic, (375,375))
-        self.screen.blit(pic, (375,0))
+        pic = pygame.transform.scale(pic, (375, 375))
+        self.screen.blit(pic, (375, 375))
 
     def promptNumSeen(self, numSeen):
         # Eye visual
@@ -162,6 +162,15 @@ class PYGAME_WINDOW:
         iceImg = pygame.image.load('ice.png')
         iceImg = pygame.transform.scale(iceImg, (140, 120))
         self.screen.blit(iceImg, (295, 470))
+
+    def promptLeaderboard(self, first, second, third):
+        medalsImg = pygame.image.load('medals.jpg')
+        medalsImg = pygame.transform.scale(medalsImg, (268, 80))
+        self.screen.blit(medalsImg, (115, 690))
+        font = pygame.font.Font('freesansbold.ttf', 16)
+        text = font.render("1. " + first + "       2. " + second + "      3. " + third, True, (0, 0, 0))
+        self.screen.blit(text, (95, 765))
+        
         
         
         

@@ -28,7 +28,35 @@ else:
 print(database)
 pickle.dump(database, open('userData/database.p', 'wb'))
 
-    
+# Calculate first place user
+mostCoins = 0
+numUsers = 0
+for name in database:
+    numUsers += 1
+    if (database[name]['numCoins'] > mostCoins):
+        mostCoins = database[name]['numCoins']
+        firstPlace = name + " (" + str(mostCoins) + ")"
+
+# Calculate second place user
+mostCoins2 = 0
+for name in database:
+    if ((database[name]['numCoins'] > mostCoins2) & (database[name]['numCoins'] < mostCoins)):
+        mostCoins2 = database[name]['numCoins']
+        secondPlace = name + " (" + str(mostCoins2) + ")"
+
+# Calculate third place user
+mostCoins3 = 0
+for name in database:
+    if ((database[name]['numCoins'] > mostCoins3) & (database[name]['numCoins'] < mostCoins2)):
+        mostCoins3 = database[name]['numCoins']
+        thirdPlace = name + " (" + str(mostCoins3) + ")"
+        
+if (numUsers == 0):
+    firstPlace = "N/A"
+    secondPlace = "N/A"
+    thirdPlace = "N/A"
+
+ 
 clf = pickle.load(open('userData/classifier.p', 'rb'))
 testData = np.zeros((1, 30), dtype = 'f')
 
@@ -204,7 +232,7 @@ def HandleState1():
     
     
 def HandleState2():
-    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins
+    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, firstPlace, secondPlace, thirdPlace
     digitTimer += 1 # Time viewing random digit
     signTimer += 1 # Time viewing ASL sign
     #database = pickle.load(open('userData/database.p', 'rb'))
@@ -266,6 +294,8 @@ def HandleState2():
         pygameWindow.promptCurrCoinBag(numCoins)
 
         pygameWindow.promptPrevCoins(prevNumCoins)
+
+        #pygameWindow.promptLeaderboard(firstPlace, secondPlace, thirdPlace)
         
         # KNN
         k = 0
@@ -301,10 +331,10 @@ def HandleState2():
         print(predictedClass)
         
         if (predictedClass == digitToSign):
-            pygameWindow.promptFlame()
+            #pygameWindow.promptFlame()
             signCorrect += 1
         else:
-            pygameWindow.promptIce()
+            #pygameWindow.promptIce()
             signCorrect = 0
             
         if (digitTimer > digitTimerLimit): # Change digit and increment attempt if not signed correctly
