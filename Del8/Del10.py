@@ -7,7 +7,8 @@ from pygameWindow import PYGAME_WINDOW
 import random
 import numpy as np
 import threading
-import time 
+import time
+import Tkinter as tk
 
 # User login 
 database = pickle.load(open('userData/database.p', 'rb'))
@@ -295,7 +296,7 @@ def HandleState2():
 
         pygameWindow.promptPrevCoins(prevNumCoins)
 
-        #pygameWindow.promptLeaderboard(firstPlace, secondPlace, thirdPlace)
+        pygameWindow.promptLeaderboard(firstPlace, secondPlace, thirdPlace)
         
         # KNN
         k = 0
@@ -331,10 +332,10 @@ def HandleState2():
         print(predictedClass)
         
         if (predictedClass == digitToSign):
-            #pygameWindow.promptFlame()
+            pygameWindow.promptFlame()
             signCorrect += 1
         else:
-            #pygameWindow.promptIce()
+            pygameWindow.promptIce()
             signCorrect = 0
             
         if (digitTimer > digitTimerLimit): # Change digit and increment attempt if not signed correctly
