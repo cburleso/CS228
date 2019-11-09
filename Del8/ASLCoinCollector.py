@@ -406,8 +406,8 @@ def HandleState2():
             
             
         if (signCorrect == 10): # User successfully signed digit (recognized by KNN 10 times)
-            if (numHearts != 3):
-                numHearts += 1
+##            if (numHearts != 3):
+##                numHearts += 1
             try:
                 database[userName][successesDict] += 1
             except:
@@ -458,6 +458,7 @@ def HandleState2():
             pickle.dump(database, open('userData/database.p', 'wb'))
             signTimer = 0
             programState = 3
+            
 
             
     else:
@@ -468,15 +469,17 @@ def HandleState2():
     pygameWindow.Reveal()
 
 def HandleState3(): # To show 'success' check mark when user correctly signs digit 
-    global programState, randNum, greenCheckTimer, numIndex, levelOneNums
+    global programState, randNum, greenCheckTimer, numIndex, levelOneNums, numHearts
     greenCheckTimer += 1
     pygameWindow.Prepare()
     frame = controller.frame()
     Handle_Frame(frame)
-    pygameWindow.promptSuccess()
+    pygameWindow.promptSuccess(numHearts)
     if HandOverDevice():
         if HandCentered():
             if (greenCheckTimer > 5):
+                if (numHearts != 3):
+                    numHearts += 1
                 programState = 2
                 greenCheckTimer = 0
         else:
