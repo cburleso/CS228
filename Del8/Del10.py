@@ -10,24 +10,63 @@ import threading
 import time
 import Tkinter as tk
 
-# User login 
+
+# TKINTER TESTING
+userName = ""
 database = pickle.load(open('userData/database.p', 'rb'))
+root= tk.Tk()
 
-userName = raw_input('Please enter your name: ')
+canvas1 = tk.Canvas(root, width = 400, height = 300)
+canvas1.pack()
 
-if userName in database:
-    print('Welcome back, ' + userName + '.')
-    database[userName]['logins'] += 1
+entry1 = tk.Entry (root) 
+canvas1.create_window(200, 140, window=entry1)
 
-else:
-    database[userName] = {'logins' : 1}
-    userProgress = database[userName]
-    userProgress['currDigitDict'] = [0, 1, 2]
-    userProgress['numCoins'] = 0 
-    print('Welcome, ' + userName + '.')
+def getUsername():
+    global userName, database
+    userName = entry1.get()
 
-print(database)
-pickle.dump(database, open('userData/database.p', 'wb'))
+    if userName in database:
+        print('Welcome back, ' + userName + '.')
+        database[userName]['logins'] += 1
+
+    else:
+        database[userName] = {'logins' : 1}
+        userProgress = database[userName]
+        userProgress['currDigitDict'] = [0, 1, 2]
+        userProgress['numCoins'] = 0 
+        print('Welcome, ' + userName + '.')
+
+    print(database)
+    pickle.dump(database, open('userData/database.p', 'wb'))
+    root.destroy()
+
+button1 = tk.Button(text='Login', command=getUsername)
+canvas1.create_window(200, 180, window=button1)
+root.mainloop()
+
+
+
+
+# --------------------------------------------------------
+# User login 
+##database = pickle.load(open('userData/database.p', 'rb'))
+##
+##userName = raw_input('Please enter your name: ')
+##
+##if userName in database:
+##    print('Welcome back, ' + userName + '.')
+##    database[userName]['logins'] += 1
+##
+##else:
+##    database[userName] = {'logins' : 1}
+##    userProgress = database[userName]
+##    userProgress['currDigitDict'] = [0, 1, 2]
+##    userProgress['numCoins'] = 0 
+##    print('Welcome, ' + userName + '.')
+##
+##print(database)
+##pickle.dump(database, open('userData/database.p', 'wb'))
 
 # Calculate first place user
 mostCoins = 0
@@ -74,13 +113,14 @@ yMin = 1000.0
 yMax = -1000.0
 
 prevNumCoins = database[userName]['numCoins'] # Get prev number of coins from user's last session 
-handCenteredTimer = 0
-greenCheckTimer = 0
-digitTimer = 0
-signCorrect = 0
-signTimer = 0
+handCenteredTimer = 0 # Timer for how long hand is centered before entering handleState1
+greenCheckTimer = 0 # Timer for how long green check is presented to user 
+digitTimer = 0 # Timer for how long user is presented with digit 
+signCorrect = 0 # Number of times KNN recognizes digit successfully signed 
+signTimer = 0 # Timer to maintain total duration of sign being presented 
+numHearts = 3 # Number of "lives" user has (1 missed digit = 1 less life)
 numCoins = 0 # Reset bag of coins to zero for each session 
-numIndex = 0
+numIndex = 0 # Index value which iterates over current digit dictionary for the user 
 currDigitList = database[userName]['currDigitDict']
 digitToSign = currDigitList[numIndex] # Initial digit to sign 
 programState = 0
@@ -233,7 +273,7 @@ def HandleState1():
     
     
 def HandleState2():
-    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, firstPlace, secondPlace, thirdPlace
+    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, firstPlace, secondPlace, thirdPlace, numHearts
     digitTimer += 1 # Time viewing random digit
     signTimer += 1 # Time viewing ASL sign
     #database = pickle.load(open('userData/database.p', 'rb'))
@@ -253,24 +293,24 @@ def HandleState2():
         # with the current digit to sign) & length of time they have to sign the gesture 
         try:
             if (database[userName][successesDict] < 1):
-                digitTimerLimit = 30
+                digitTimerLimit = 25
             elif (database[userName][successesDict] == 1):
                 signTimerLimit = 15
-                digitTimerLimit = 30
+                digitTimerLimit = 25
             elif (database[userName][successesDict] == 2):
-                signTimerLimit = 8
-                digitTimerLimit = 30
+                signTimerLimit = 10
+                digitTimerLimit = 22
             elif (database[userName][successesDict] > 2):
                 signTimerLimit = 0
-                digitTimerLimit = 15 # Decrease time user has to sign digit
+                digitTimerLimit = 20 # Decrease time user has to sign digit
             elif (database[userName][successesDict] > 3):
-                digitTimerLimit = 10
+                digitTimerLimit = 18
             else:
-                signTimerLimit = 100 # Show ASL gesture the entire time
-                digitTimerLimit = 30
+                signTimerLimit = 20 # Show ASL gesture the entire time
+                digitTimerLimit = 20
         except:
-            signTimerLimit = 100
-            digitTimerLimit = 30
+            signTimerLimit = 20
+            digitTimerLimit = 20
             
         if (signTimer < signTimerLimit):
             pygameWindow.promptASLsign(digitToSign)
@@ -296,7 +336,10 @@ def HandleState2():
 
         pygameWindow.promptPrevCoins(prevNumCoins)
 
-        pygameWindow.promptLeaderboard(firstPlace, secondPlace, thirdPlace)
+        if (numHearts != 0):
+            pygameWindow.promptNumHearts(numHearts)
+
+        #pygameWindow.promptLeaderboard(firstPlace, secondPlace, thirdPlace)
         
         # KNN
         k = 0
@@ -342,6 +385,12 @@ def HandleState2():
             database[userName][attemptsDict] += 1 # Increment user attempt at digit
             if (numCoins != 0):
                 numCoins -= 1
+
+            if (numHearts != 0):
+                numHearts -= 1
+                if (numHearts == 0):
+                    numCoins = 0
+                
             database[userName]['numCoins'] = numCoins
             pickle.dump(database, open('userData/database.p', 'wb'))
             # Change digit 
@@ -357,6 +406,8 @@ def HandleState2():
             
             
         if (signCorrect == 10): # User successfully signed digit (recognized by KNN 10 times)
+            if (numHearts != 3):
+                numHearts += 1
             try:
                 database[userName][successesDict] += 1
             except:
@@ -422,7 +473,7 @@ def HandleState3(): # To show 'success' check mark when user correctly signs dig
     pygameWindow.Prepare()
     frame = controller.frame()
     Handle_Frame(frame)
-    pygameWindow.promptGreenCheck()
+    pygameWindow.promptSuccess()
     if HandOverDevice():
         if HandCentered():
             if (greenCheckTimer > 5):

@@ -39,7 +39,7 @@ class PYGAME_WINDOW:
         handImg = pygame.image.load('moveDown.png')
         self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
 
-    def promptGreenCheck(self):
+    def promptSuccess(self):
         handImg = pygame.image.load('greenCheck.png')
         self.screen.blit(handImg, (constants.pygameWindowWidth - 460, 0))
         font = pygame.font.Font('freesansbold.ttf', 32)
@@ -170,6 +170,12 @@ class PYGAME_WINDOW:
         font = pygame.font.Font('freesansbold.ttf', 16)
         text = font.render("1. " + first + "       2. " + second + "      3. " + third, True, (0, 0, 0))
         self.screen.blit(text, (95, 765))
+
+    def promptNumHearts(self, numHearts):
+        fileString = str(numHearts) + 'lives.jpg'
+        heartsImg = pygame.image.load(fileString)
+        self.screen.blit(heartsImg, (500, 750))
+        
         
         
         
