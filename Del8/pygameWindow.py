@@ -39,22 +39,26 @@ class PYGAME_WINDOW:
         handImg = pygame.image.load('moveDown.png')
         self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
 
-    def promptSuccess(self, numHearts):
-        checkImg = pygame.image.load('greenCheck.png')
-        self.screen.blit(checkImg, (constants.pygameWindowWidth - 460, 0))
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render('+', True, (0, 255, 0))
-        self.screen.blit(text, (520, 150))
-        # Coin visual
-        coinImg = pygame.image.load('goldCoin.png')
-        coinImg = pygame.transform.scale(coinImg, (50, 50))
-        self.screen.blit(coinImg, (540, 140))
-        # Heart Visual (if numHearts < 3)
-        if (numHearts < 3):
-            text = font.render('+', True, (255, 0, 0))
-            self.screen.blit(text, (520, 340))
-            heartImg = pygame.image.load('1lives.jpg')
-            self.screen.blit(heartImg, (540, 340))
+    def promptSuccess(self, numHearts, coinStreak):
+        if (coinStreak == 3): # Show 3 coin streak visual 
+            streakImg = pygame.image.load('3xstreak.JPG')
+            self.screen.blit(streakImg, (constants.pygameWindowWidth - 500, 50))
+        else: # Otherwise show simple green check (and heart if applicable)
+            checkImg = pygame.image.load('greenCheck.png')
+            self.screen.blit(checkImg, (constants.pygameWindowWidth - 460, 0))
+            font = pygame.font.Font('freesansbold.ttf', 32)
+            text = font.render('+', True, (0, 255, 0))
+            self.screen.blit(text, (520, 150))
+            # Coin visual
+            coinImg = pygame.image.load('goldCoin.png')
+            coinImg = pygame.transform.scale(coinImg, (50, 50))
+            self.screen.blit(coinImg, (540, 140))
+            # Heart Visual (if numHearts < 3)
+            if (numHearts < 3):
+                text = font.render('+', True, (255, 0, 0))
+                self.screen.blit(text, (520, 340))
+                heartImg = pygame.image.load('1lives.jpg')
+                self.screen.blit(heartImg, (540, 340))
 
     def promptThumbsUp(self):
         handImg = pygame.image.load('thumbsUp.png')

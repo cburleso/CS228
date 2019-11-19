@@ -120,9 +120,10 @@ signCorrect = 0 # Number of times KNN recognizes digit successfully signed
 signTimer = 0 # Timer to maintain total duration of sign being presented 
 numHearts = 3 # Number of "lives" user has (1 missed digit = 1 less life)
 numCoins = 0 # Reset bag of coins to zero for each session 
-numIndex = 0 # Index value which iterates over current digit dictionary for the user 
+numIndex = 0 # Index value which iterates over current digit dictionary for the user
+coinStreak = 0
 currDigitList = database[userName]['currDigitDict']
-digitToSign = currDigitList[numIndex] # Initial digit to sign 
+digitToSign = currDigitList[numIndex] # Initial digit to sign
 programState = 0
 
 def Handle_Frame(frame):
@@ -273,7 +274,7 @@ def HandleState1():
     
     
 def HandleState2():
-    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, firstPlace, secondPlace, thirdPlace, numHearts
+    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, firstPlace, secondPlace, thirdPlace, numHearts, coinStreak
     digitTimer += 1 # Time viewing random digit
     signTimer += 1 # Time viewing ASL sign
     #database = pickle.load(open('userData/database.p', 'rb'))
@@ -372,7 +373,7 @@ def HandleState2():
                     k = k+3
         testData = CenterData(testData)
         predictedClass = clf.Predict(testData)
-        print(predictedClass)
+        #print(predictedClass)
         
         if (predictedClass == digitToSign):
             pygameWindow.promptFlame()
@@ -401,13 +402,12 @@ def HandleState2():
                 
             digitToSign = database[userName]['currDigitDict'][numIndex]
             digitTimer = 0
+            coinStreak = 0 # Set coin streak back to zero 
             signTimer = 0
             
             
             
         if (signCorrect == 10): # User successfully signed digit (recognized by KNN 10 times)
-##            if (numHearts != 3):
-##                numHearts += 1
             try:
                 database[userName][successesDict] += 1
             except:
@@ -415,8 +415,13 @@ def HandleState2():
                 
             database[userName][attemptsDict] += 1 # Increment user attempt at digit
             digitTimer = 0
-
-            numCoins += 1 # Increment number of gold coins
+            
+            coinStreak += 1 # Increment coin streak 
+            if (coinStreak == 3):
+                numCoins += 5
+            else:
+                numCoins += 1 # Increment number of gold coins
+            
             database[userName]['numCoins'] = numCoins # Update database info
 
             # Check if user passed 'level one' (digits 0 through 2)
@@ -469,15 +474,19 @@ def HandleState2():
     pygameWindow.Reveal()
 
 def HandleState3(): # To show 'success' check mark when user correctly signs digit 
-    global programState, randNum, greenCheckTimer, numIndex, levelOneNums, numHearts
+    global programState, randNum, greenCheckTimer, numIndex, levelOneNums, numHearts, coinStreak
+    if (coinStreak == 3):
+        checkTimerLimit = 250
+    else:
+        checkTimerLimit = 5
     greenCheckTimer += 1
     pygameWindow.Prepare()
     frame = controller.frame()
     Handle_Frame(frame)
-    pygameWindow.promptSuccess(numHearts)
+    pygameWindow.promptSuccess(numHearts, coinStreak)
     if HandOverDevice():
         if HandCentered():
-            if (greenCheckTimer > 5):
+            if (greenCheckTimer > checkTimerLimit):
                 if (numHearts != 3):
                     numHearts += 1
                 programState = 2
