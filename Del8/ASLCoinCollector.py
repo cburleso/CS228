@@ -10,12 +10,39 @@ import threading
 import time
 import Tkinter as tk
 
-
-# TKINTER TESTING
-userName = ""
 database = pickle.load(open('userData/database.p', 'rb'))
-root= tk.Tk()
+# Calculating top 3 users
+mostCoins = 0
+numUsers = 0
+for name in database:
+    numUsers += 1
+    if (database[name]['numCoins'] > mostCoins):
+        mostCoins = database[name]['numCoins']
+        firstPlace = name + " (" + str(mostCoins) + ")"
 
+# Calculate second place user
+mostCoins2 = 0
+for name in database:
+    if ((database[name]['numCoins'] > mostCoins2) & (database[name]['numCoins'] < mostCoins)):
+        mostCoins2 = database[name]['numCoins']
+        secondPlace = name + " (" + str(mostCoins2) + ")"
+
+# Calculate third place user
+mostCoins3 = 0
+for name in database:
+    if ((database[name]['numCoins'] > mostCoins3) & (database[name]['numCoins'] < mostCoins2)):
+        mostCoins3 = database[name]['numCoins']
+        thirdPlace = name + " (" + str(mostCoins3) + ")"
+        
+if (numUsers == 0):
+    firstPlace = "N/A"
+    secondPlace = "N/A"
+    thirdPlace = "N/A"
+
+
+# -------------------TKINTER WINDOW START--------------------
+userName = ""
+root= tk.Tk()
 canvas1 = tk.Canvas(root, width = 400, height = 300)
 canvas1.pack()
 
@@ -44,11 +71,8 @@ def getUsername():
 button1 = tk.Button(text='Login', command=getUsername)
 canvas1.create_window(200, 180, window=button1)
 root.mainloop()
+# -------------------TKINTER WINDOW START END--------------------
 
-
-
-
-# --------------------------------------------------------
 # User login 
 ##database = pickle.load(open('userData/database.p', 'rb'))
 ##
@@ -68,35 +92,6 @@ root.mainloop()
 ##print(database)
 ##pickle.dump(database, open('userData/database.p', 'wb'))
 
-# Calculate first place user
-mostCoins = 0
-numUsers = 0
-for name in database:
-    numUsers += 1
-    if (database[name]['numCoins'] > mostCoins):
-        mostCoins = database[name]['numCoins']
-        firstPlace = name + " (" + str(mostCoins) + ")"
-
-# Calculate second place user
-mostCoins2 = 0
-for name in database:
-    if ((database[name]['numCoins'] > mostCoins2) & (database[name]['numCoins'] < mostCoins)):
-        mostCoins2 = database[name]['numCoins']
-        secondPlace = name + " (" + str(mostCoins2) + ")"
-
-# Calculate third place user
-mostCoins3 = 0
-for name in database:
-    if ((database[name]['numCoins'] > mostCoins3) & (database[name]['numCoins'] < mostCoins2)):
-        mostCoins3 = database[name]['numCoins']
-        thirdPlace = name + " (" + str(mostCoins3) + ")"
-        
-if (numUsers == 0):
-    firstPlace = "N/A"
-    secondPlace = "N/A"
-    thirdPlace = "N/A"
-
- 
 clf = pickle.load(open('userData/classifier.p', 'rb'))
 testData = np.zeros((1, 30), dtype = 'f')
 
@@ -124,6 +119,7 @@ numIndex = 0 # Index value which iterates over current digit dictionary for the 
 coinStreak = 0
 currDigitList = database[userName]['currDigitDict']
 digitToSign = currDigitList[numIndex] # Initial digit to sign
+globalCoinChange = 0
 programState = 0
 
 def Handle_Frame(frame):
@@ -274,7 +270,7 @@ def HandleState1():
     
     
 def HandleState2():
-    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, firstPlace, secondPlace, thirdPlace, numHearts, coinStreak
+    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, firstPlace, secondPlace, thirdPlace, numHearts, coinStreak, globalCoinChange
     digitTimer += 1 # Time viewing random digit
     signTimer += 1 # Time viewing ASL sign
     #database = pickle.load(open('userData/database.p', 'rb'))
@@ -290,12 +286,26 @@ def HandleState2():
         attemptsDict = 'digit' + str(digitToSign) + 'attempts'
         successesDict = 'digit' + str(digitToSign) + 'successes'
 
+        # Determine how much coins user earns for each success
+        try:
+            numSuccess = database[userName][successesDict]
+        except:
+            numSuccess = 0
+            
+        if (numSuccess > 1):
+            coinChange = 2
+        elif (numSuccess > 3):
+            coinChange = 3
+        else:
+            coinChange = 1
+
+        globalCoinChange = coinChange
         # Determine how long ASL gesture should be presented to user (depending on number of successes
         # with the current digit to sign) & length of time they have to sign the gesture 
         try:
             if (database[userName][successesDict] < 1):
                 digitTimerLimit = 25
-            elif (database[userName][successesDict] == 1):
+            elif (database[userName][successesDict] > 1):
                 signTimerLimit = 15
                 digitTimerLimit = 25
             elif (database[userName][successesDict] == 2):
@@ -387,7 +397,7 @@ def HandleState2():
         if (digitTimer > digitTimerLimit): # Change digit and increment attempt if not signed correctly
             database[userName][attemptsDict] += 1 # Increment user attempt at digit
             if (numCoins != 0):
-                numCoins -= 1
+                numCoins -= coinChange
 
             if (numHearts != 0):
                 numHearts -= 1
@@ -419,10 +429,12 @@ def HandleState2():
             digitTimer = 0
             
             coinStreak += 1 # Increment coin streak 
-            if (coinStreak == 3):
+            if (coinStreak == 5):
                 numCoins += 5
+            elif (coinStreak == 10):
+                numCoins += 10
             else:
-                numCoins += 1 # Increment number of gold coins
+                numCoins += coinChange # Increment number of gold coins depending on user success with digit (calculated for coinChange)
             
             database[userName]['numCoins'] = numCoins # Update database info
 
@@ -476,16 +488,18 @@ def HandleState2():
     pygameWindow.Reveal()
 
 def HandleState3(): # To show 'success' check mark when user correctly signs digit 
-    global programState, randNum, greenCheckTimer, numIndex, levelOneNums, numHearts, coinStreak
-    if (coinStreak == 3):
-        checkTimerLimit = 250
+    global programState, randNum, greenCheckTimer, numIndex, levelOneNums, numHearts, coinStreak, globalCoinChange
+    if (coinStreak == 5):
+        checkTimerLimit = 300
+    elif (coinStreak == 10):
+        checkTimerLimit = 300
     else:
         checkTimerLimit = 5
     greenCheckTimer += 1
     pygameWindow.Prepare()
     frame = controller.frame()
     Handle_Frame(frame)
-    pygameWindow.promptSuccess(numHearts, coinStreak)
+    pygameWindow.promptSuccess(numHearts, coinStreak, globalCoinChange)
     if HandOverDevice():
         if HandCentered():
             if (greenCheckTimer > checkTimerLimit):

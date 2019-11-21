@@ -39,20 +39,23 @@ class PYGAME_WINDOW:
         handImg = pygame.image.load('moveDown.png')
         self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
 
-    def promptSuccess(self, numHearts, coinStreak):
-        if (coinStreak == 3): # Show 3 coin streak visual 
-            streakImg = pygame.image.load('3xstreak.JPG')
+    def promptSuccess(self, numHearts, coinStreak, coinChange):
+        if (coinStreak == 5): # Show 5 coin streak visual 
+            streakImg = pygame.image.load('5xstreak.JPG')
+            self.screen.blit(streakImg, (constants.pygameWindowWidth - 500, 50))
+        elif (coinStreak == 10): # Show 10 coin streak visual
+            streakImg = pygame.image.load('10xstreak.JPG')
             self.screen.blit(streakImg, (constants.pygameWindowWidth - 500, 50))
         else: # Otherwise show simple green check (and heart if applicable)
-            checkImg = pygame.image.load('greenCheck.png')
-            self.screen.blit(checkImg, (constants.pygameWindowWidth - 460, 0))
-            font = pygame.font.Font('freesansbold.ttf', 32)
-            text = font.render('+', True, (0, 255, 0))
-            self.screen.blit(text, (520, 150))
             # Coin visual
             coinImg = pygame.image.load('goldCoin.png')
             coinImg = pygame.transform.scale(coinImg, (50, 50))
             self.screen.blit(coinImg, (540, 140))
+            checkImg = pygame.image.load('greenCheck.png')
+            self.screen.blit(checkImg, (constants.pygameWindowWidth - 460, 0))
+            font = pygame.font.Font('freesansbold.ttf', 32)
+            text = font.render(('+ ' + str(coinChange)), True, (0, 128, 0))
+            self.screen.blit(text, (525, 150))
             # Heart Visual (if numHearts < 3)
             if (numHearts < 3):
                 text = font.render('+', True, (255, 0, 0))
