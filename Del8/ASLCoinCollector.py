@@ -337,6 +337,8 @@ def HandleState2():
 
         pygameWindow.promptPrevCoins(prevNumCoins)
 
+        pygameWindow.promptStreak(coinStreak)
+
         if (numHearts != 0):
             pygameWindow.promptNumHearts(numHearts)
 

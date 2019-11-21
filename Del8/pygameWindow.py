@@ -185,6 +185,15 @@ class PYGAME_WINDOW:
         fileString = str(numHearts) + 'lives.jpg'
         heartsImg = pygame.image.load(fileString)
         self.screen.blit(heartsImg, (500, 750))
+
+    def promptStreak(self, coinStreak):
+        streakImg = pygame.image.load('streakPic.JPG')
+        #streakImg = pygame.transform.scale(flameImg, (75, 120))
+        self.screen.blit(streakImg, (540, 700))
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render(str(coinStreak), True, (255, 165, 0))
+        self.screen.blit(text, (605, 712))
+        
         
         
         
