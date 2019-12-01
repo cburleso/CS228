@@ -90,26 +90,6 @@ highscoreButton = tk.Button(text='Highscores', command=showHighscores)
 canvas1.create_window(270, 220, window=loginButton)
 canvas1.create_window(200, 260, window=highscoreButton)
 root.mainloop()
-# -------------------TKINTER WINDOW START END--------------------
-
-# User login 
-##database = pickle.load(open('userData/database.p', 'rb'))
-##
-##userName = raw_input('Please enter your name: ')
-##
-##if userName in database:
-##    print('Welcome back, ' + userName + '.')
-##    database[userName]['logins'] += 1
-##
-##else:
-##    database[userName] = {'logins' : 1}
-##    userProgress = database[userName]
-##    userProgress['currDigitDict'] = [0, 1, 2]
-##    userProgress['numCoins'] = 0 
-##    print('Welcome, ' + userName + '.')
-##
-##print(database)
-##pickle.dump(database, open('userData/database.p', 'wb'))
 
 clf = pickle.load(open('userData/classifier.p', 'rb'))
 testData = np.zeros((1, 30), dtype = 'f')
@@ -142,6 +122,7 @@ globalCoinChange = 0
 missTimer = 0
 miss = False
 programState = 0
+beatPrev = 0
 
 
 def Handle_Frame(frame):
@@ -292,7 +273,7 @@ def HandleState1():
     
     
 def HandleState2():
-    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, firstPlace, secondPlace, thirdPlace, numHearts, coinStreak, globalCoinChange, miss, missTimer, coinMiss
+    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, numHearts, coinStreak, globalCoinChange, miss, missTimer, coinMiss, beatPrev
     digitTimer += 1 # Time viewing random digit
     signTimer += 1 # Time viewing ASL sign
     #database = pickle.load(open('userData/database.p', 'rb'))
@@ -337,25 +318,23 @@ def HandleState2():
         # Determine how long ASL gesture should be presented to user (depending on number of successes
         # with the current digit to sign) & length of time they have to sign the gesture 
         try:
-            if (database[userName][successesDict] < 1):
-                digitTimerLimit = 25
-            elif (database[userName][successesDict] > 1):
-                signTimerLimit = 15
-                digitTimerLimit = 25
+            if (database[userName][successesDict] == 1):
+                signTimerLimit = 25
+                digitTimerLimit = 15
             elif (database[userName][successesDict] == 2):
                 signTimerLimit = 10
-                digitTimerLimit = 22
+                digitTimerLimit = 15
             elif (database[userName][successesDict] > 2):
                 signTimerLimit = 0
-                digitTimerLimit = 20 # Decrease time user has to sign digit
+                digitTimerLimit = 10 # Decrease time user has to sign digit
             elif (database[userName][successesDict] > 3):
-                digitTimerLimit = 18
+                digitTimerLimit = 10
             else:
                 signTimerLimit = 20 # Show ASL gesture the entire time
-                digitTimerLimit = 20
+                digitTimerLimit = 15
         except:
-            signTimerLimit = 20
-            digitTimerLimit = 20
+            signTimerLimit = 25
+            digitTimerLimit = 15
             
         if (signTimer < signTimerLimit):
             pygameWindow.promptASLsign(digitToSign)
@@ -382,6 +361,8 @@ def HandleState2():
         pygameWindow.promptPrevCoins(prevNumCoins)
 
         pygameWindow.promptStreak(coinStreak)
+
+        pygameWindow.promptClock(((digitTimer - digitTimerLimit) * -1))
 
         if (numHearts != 0):
             pygameWindow.promptNumHearts(numHearts)
@@ -455,7 +436,8 @@ def HandleState2():
             
             
             
-        if (signCorrect == 10): # User successfully signed digit (recognized by KNN 10 times)
+        if (signCorrect == 7): # User successfully signed digit (recognized by KNN 7 times)
+            
             try:
                 database[userName][successesDict] += 1
             except:
@@ -524,7 +506,7 @@ def HandleState2():
     pygameWindow.Reveal()
 
 def HandleState3(): # To show 'success' check mark when user correctly signs digit 
-    global programState, randNum, greenCheckTimer, numIndex, levelOneNums, numHearts, coinStreak, globalCoinChange
+    global programState, randNum, greenCheckTimer, numIndex, levelOneNums, numHearts, coinStreak, globalCoinChange, beatPrev
     if (coinStreak == 5):
         checkTimerLimit = 300
     elif (coinStreak == 10):

@@ -168,12 +168,12 @@ class PYGAME_WINDOW:
     def promptHoldHand(self):
         handImg = pygame.image.load('holdHand.png')
         handImg = pygame.transform.scale(handImg, (100, 100))
-        self.screen.blit(handImg, (325, 480))
+        self.screen.blit(handImg, (150, 695))
 
     def promptIce(self):
         iceImg = pygame.image.load('ice.png')
         iceImg = pygame.transform.scale(iceImg, (140, 120))
-        self.screen.blit(iceImg, (295, 470))
+        self.screen.blit(iceImg, (150, 690))
 
     def promptLeaderboard(self, first, second, third):
         medalsImg = pygame.image.load('medals.jpg')
@@ -190,7 +190,6 @@ class PYGAME_WINDOW:
 
     def promptStreak(self, coinStreak):
         streakImg = pygame.image.load('streakPic.JPG')
-        #streakImg = pygame.transform.scale(flameImg, (75, 120))
         self.screen.blit(streakImg, (540, 700))
         font = pygame.font.Font('freesansbold.ttf', 32)
         text = font.render(str(coinStreak), True, (255, 165, 0))
@@ -200,6 +199,15 @@ class PYGAME_WINDOW:
         font = pygame.font.Font('freesansbold.ttf', 32)
         text = font.render(('-' + str(coinMiss)), True, (255, 0, 0))
         self.screen.blit(text, (180, 660))
+
+    def promptClock(self, timeLeft):
+        clockImg = pygame.image.load('clock.jpg')
+        clockImg = pygame.transform.scale(clockImg, (80, 80))
+        self.screen.blit(clockImg, (0, 690))
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render((str(timeLeft)), True, (0, 0, 0))
+        if (timeLeft >= 0):
+            self.screen.blit(text, (95, 735))
         
         
         
