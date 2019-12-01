@@ -9,6 +9,8 @@ import numpy as np
 import threading
 import time
 import Tkinter as tk
+from Tkinter import *
+from PIL import Image, ImageTk
 
 database = pickle.load(open('userData/database.p', 'rb'))
 # Calculating top 3 users
@@ -42,12 +44,12 @@ if (numUsers == 0):
 
 # -------------------TKINTER WINDOW START--------------------
 userName = ""
-root= tk.Tk()
+root = tk.Tk()
 canvas1 = tk.Canvas(root, width = 400, height = 300)
 canvas1.pack()
 
 entry1 = tk.Entry (root) 
-canvas1.create_window(200, 140, window=entry1)
+canvas1.create_window(180, 220, window=entry1)
 
 def getUsername():
     global userName, database
@@ -68,8 +70,25 @@ def getUsername():
     pickle.dump(database, open('userData/database.p', 'wb'))
     root.destroy()
 
-button1 = tk.Button(text='Login', command=getUsername)
-canvas1.create_window(200, 180, window=button1)
+def showHighscores():
+    load = Image.open("smallMedals.jpg")
+    render = ImageTk.PhotoImage(load)
+    img = Label(image=render)
+    img.image = render
+    img.place(x=-55, y=0) 
+    text = Label(text=firstPlace)
+    text.place(x=40, y=110)
+    text2 = Label(text=secondPlace)
+    text2.place(x=160, y=110)
+    text3 = Label(text=thirdPlace)
+    text3.place(x=296, y=110)
+    
+    
+loginButton = tk.Button(text='Login', command=getUsername)
+highscoreButton = tk.Button(text='Highscores', command=showHighscores)
+
+canvas1.create_window(270, 220, window=loginButton)
+canvas1.create_window(200, 260, window=highscoreButton)
 root.mainloop()
 # -------------------TKINTER WINDOW START END--------------------
 
@@ -120,7 +139,10 @@ coinStreak = 0
 currDigitList = database[userName]['currDigitDict']
 digitToSign = currDigitList[numIndex] # Initial digit to sign
 globalCoinChange = 0
+missTimer = 0
+miss = False
 programState = 0
+
 
 def Handle_Frame(frame):
     global x, y, xMin, xMax, yMin, yMax
@@ -270,7 +292,7 @@ def HandleState1():
     
     
 def HandleState2():
-    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, firstPlace, secondPlace, thirdPlace, numHearts, coinStreak, globalCoinChange
+    global programState, digitToSign, testData, clf, signCorrect, digitTimer, handCenteredTimer, currDigitList, numIndex, signTimer, numCoins, prevNumCoins, firstPlace, secondPlace, thirdPlace, numHearts, coinStreak, globalCoinChange, miss, missTimer, coinMiss
     digitTimer += 1 # Time viewing random digit
     signTimer += 1 # Time viewing ASL sign
     #database = pickle.load(open('userData/database.p', 'rb'))
@@ -286,19 +308,31 @@ def HandleState2():
         attemptsDict = 'digit' + str(digitToSign) + 'attempts'
         successesDict = 'digit' + str(digitToSign) + 'successes'
 
+        if (miss):
+            if (missTimer < 5):
+                missTimer += 1
+                pygameWindow.promptMiss(coinMiss)
+            else:
+                miss = False
+                missTimer = 0
+                
+            
         # Determine how much coins user earns for each success
         try:
             numSuccess = database[userName][successesDict]
         except:
             numSuccess = 0
-            
-        if (numSuccess > 1):
-            coinChange = 2
-        elif (numSuccess > 3):
-            coinChange = 3
-        else:
-            coinChange = 1
 
+        if (numSuccess == 0):
+            coinChange = 1
+        if (numSuccess == 1):
+            coinChange = 1
+        if (numSuccess == 2):
+            coinChange = 2
+        if (numSuccess > 2):
+            coinChange = 3
+        
+        
         globalCoinChange = coinChange
         # Determine how long ASL gesture should be presented to user (depending on number of successes
         # with the current digit to sign) & length of time they have to sign the gesture 
@@ -388,13 +422,15 @@ def HandleState2():
         #print(predictedClass)
         
         if (predictedClass == digitToSign):
-            pygameWindow.promptFlame()
+            pygameWindow.promptHoldHand()
             signCorrect += 1
         else:
             pygameWindow.promptIce()
             signCorrect = 0
             
         if (digitTimer > digitTimerLimit): # Change digit and increment attempt if not signed correctly
+            coinMiss = coinChange
+            miss = True
             database[userName][attemptsDict] += 1 # Increment user attempt at digit
             if (numCoins != 0):
                 numCoins -= coinChange
@@ -432,7 +468,7 @@ def HandleState2():
             if (coinStreak == 5):
                 numCoins += 5
             elif (coinStreak == 10):
-                numCoins += 10
+                numCoins += 15
             else:
                 numCoins += coinChange # Increment number of gold coins depending on user success with digit (calculated for coinChange)
             

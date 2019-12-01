@@ -42,7 +42,7 @@ class PYGAME_WINDOW:
     def promptSuccess(self, numHearts, coinStreak, coinChange):
         if (coinStreak == 5): # Show 5 coin streak visual 
             streakImg = pygame.image.load('5xstreak.JPG')
-            self.screen.blit(streakImg, (constants.pygameWindowWidth - 500, 50))
+            self.screen.blit(streakImg, (constants.pygameWindowWidth - 480, 50))
         elif (coinStreak == 10): # Show 10 coin streak visual
             streakImg = pygame.image.load('10xstreak.JPG')
             self.screen.blit(streakImg, (constants.pygameWindowWidth - 500, 50))
@@ -50,11 +50,11 @@ class PYGAME_WINDOW:
             # Coin visual
             coinImg = pygame.image.load('goldCoin.png')
             coinImg = pygame.transform.scale(coinImg, (50, 50))
-            self.screen.blit(coinImg, (540, 140))
+            self.screen.blit(coinImg, (545, 140))
             checkImg = pygame.image.load('greenCheck.png')
             self.screen.blit(checkImg, (constants.pygameWindowWidth - 460, 0))
             font = pygame.font.Font('freesansbold.ttf', 32)
-            text = font.render(('+ ' + str(coinChange)), True, (0, 128, 0))
+            text = font.render(('+  ' + str(coinChange)), True, (0, 128, 0))
             self.screen.blit(text, (525, 150))
             # Heart Visual (if numHearts < 3)
             if (numHearts < 3):
@@ -159,17 +159,16 @@ class PYGAME_WINDOW:
         self.screen.blit(text2, (95, 618))
 
     def promptPrevCoins(self, prevNumCoins):
-        font = pygame.font.Font('freesansbold.ttf', 16)
-        text = font.render('Coins Prev. Session:', True, (0, 0, 0))
-        self.screen.blit(text, (230, 615))
+        prevSeshImg = pygame.image.load('lastSesh.JPG')
+        self.screen.blit(prevSeshImg, (250, 590))
         font2 = pygame.font.Font('freesansbold.ttf', 32)
         text2 = font2.render(str(prevNumCoins), True, (255, 0, 0))
         self.screen.blit(text2, (285, 635))
 
-    def promptFlame(self):
-        flameImg = pygame.image.load('flame.jpg')
-        flameImg = pygame.transform.scale(flameImg, (75, 120))
-        self.screen.blit(flameImg, (345, 458))
+    def promptHoldHand(self):
+        handImg = pygame.image.load('holdHand.png')
+        handImg = pygame.transform.scale(handImg, (100, 100))
+        self.screen.blit(handImg, (325, 480))
 
     def promptIce(self):
         iceImg = pygame.image.load('ice.png')
@@ -196,6 +195,12 @@ class PYGAME_WINDOW:
         font = pygame.font.Font('freesansbold.ttf', 32)
         text = font.render(str(coinStreak), True, (255, 165, 0))
         self.screen.blit(text, (605, 712))
+
+    def promptMiss(self, coinMiss):
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render(('-' + str(coinMiss)), True, (255, 0, 0))
+        self.screen.blit(text, (180, 660))
+        
         
         
         
