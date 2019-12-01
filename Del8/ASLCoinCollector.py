@@ -437,7 +437,6 @@ def HandleState2():
             
             
         if (signCorrect == 7): # User successfully signed digit (recognized by KNN 7 times)
-            
             try:
                 database[userName][successesDict] += 1
             except:
@@ -453,6 +452,12 @@ def HandleState2():
                 numCoins += 15
             else:
                 numCoins += coinChange # Increment number of gold coins depending on user success with digit (calculated for coinChange)
+
+            if (prevNumCoins > 2):
+                if (numCoins > prevNumCoins):
+                    beatPrev += 1
+                    if (beatPrev == 1):
+                        numCoins += 10
             
             database[userName]['numCoins'] = numCoins # Update database info
 
@@ -513,11 +518,13 @@ def HandleState3(): # To show 'success' check mark when user correctly signs dig
         checkTimerLimit = 300
     else:
         checkTimerLimit = 5
+    if (beatPrev == 1):
+        checkTimerLimit = 300
     greenCheckTimer += 1
     pygameWindow.Prepare()
     frame = controller.frame()
     Handle_Frame(frame)
-    pygameWindow.promptSuccess(numHearts, coinStreak, globalCoinChange)
+    pygameWindow.promptSuccess(numHearts, coinStreak, globalCoinChange, beatPrev)
     if HandOverDevice():
         if HandCentered():
             if (greenCheckTimer > checkTimerLimit):

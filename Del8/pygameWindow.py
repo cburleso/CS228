@@ -39,13 +39,17 @@ class PYGAME_WINDOW:
         handImg = pygame.image.load('moveDown.png')
         self.screen.blit(handImg, (constants.pygameWindowWidth - 400, 0))
 
-    def promptSuccess(self, numHearts, coinStreak, coinChange):
+    def promptSuccess(self, numHearts, coinStreak, coinChange, beatPrev):
         if (coinStreak == 5): # Show 5 coin streak visual 
             streakImg = pygame.image.load('5xstreak.JPG')
             self.screen.blit(streakImg, (constants.pygameWindowWidth - 480, 50))
         elif (coinStreak == 10): # Show 10 coin streak visual
             streakImg = pygame.image.load('10xstreak.JPG')
             self.screen.blit(streakImg, (constants.pygameWindowWidth - 500, 50))
+        elif (beatPrev == 1):
+            beatPrevImg = pygame.image.load('beatPrev.JPG')
+            self.screen.blit(beatPrevImg, (constants.pygameWindowWidth - 480, 50))
+            
         else: # Otherwise show simple green check (and heart if applicable)
             # Coin visual
             coinImg = pygame.image.load('goldCoin.png')
